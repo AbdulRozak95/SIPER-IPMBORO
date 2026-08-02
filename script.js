@@ -8,7 +8,7 @@
    hasil Deploy dari Google Apps Script (lihat Code.gs).
 ======================================================= */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbytMeeJiEHDZ-mX-3qS5BIwCg0c1AFZUvCHmol7R3ULnmZW2CGeg1N67sdJAuTSRyH0TQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxn0ndYKRGvjrCz6Dj_7MA3JWut5BU5VeaePKrqBkKJeBixtx2wzqa8uucBrOnQsXbVow/exec";
 
 let suratData = [];
 let editId = null;
@@ -286,8 +286,11 @@ function setupForm() {
 
     const item = {
       id: editId !== null ? editId : String(Date.now()),
+      jenisData: document.getElementById("jenisData").value,
       jenisSurat: document.getElementById("jenisSurat").value,
       nomorSurat: document.getElementById("nomorSurat").value.trim(),
+      nomorUmum: document.getElementById("nomorUmum").value.trim(),
+      nomorKhusus: document.getElementById("nomorKhusus").value.trim(),
       tanggalSurat: document.getElementById("tanggalSurat").value,
       asalTujuan: document.getElementById("asalTujuan").value.trim(),
       perihal: document.getElementById("perihal").value.trim(),
@@ -342,8 +345,8 @@ function resetForm() {
 
 /* ---------- RENDER DASHBOARD ---------- */
 function renderDashboard() {
-  const masuk = suratData.filter((s) => s.jenisSurat === "Surat Masuk").length;
-  const keluar = suratData.filter((s) => s.jenisSurat === "Surat Keluar").length;
+  const masuk = suratData.filter((s) => s.jenisData === "Surat Masuk").length;
+  const keluar = suratData.filter((s) => s.jenisData === "Surat Keluar").length;
 
   document.getElementById("countMasuk").textContent = masuk;
   document.getElementById("countKeluar").textContent = keluar;
@@ -357,7 +360,7 @@ function renderDashboard() {
   tbody.innerHTML = "";
 
   if (recent.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--gray-400); padding:24px;">Belum ada data surat.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--gray-400); padding:24px;">Belum ada data surat.</td></tr>`;
     return;
   }
 
@@ -365,7 +368,8 @@ function renderDashboard() {
     tbody.innerHTML += `
       <tr>
         <td>${i + 1}</td>
-        <td>${jenisBadge(s.jenisSurat)}</td>
+        <td>${jenisDataBadge(s.jenisData)}</td>
+        <td>${jenisSuratBadge(s.jenisSurat)}</td>
         <td>${escapeHtml(s.nomorSurat)}</td>
         <td>${formatTanggal(s.tanggalSurat)}</td>
         <td>${escapeHtml(s.perihal)}</td>
@@ -385,13 +389,15 @@ function renderTable() {
   let filtered = [...suratData].sort((a, b) => Number(b.id) - Number(a.id));
 
   if (filterJenis !== "Semua") {
-    filtered = filtered.filter((s) => s.jenisSurat === filterJenis);
+    filtered = filtered.filter((s) => s.jenisData === filterJenis);
   }
 
   if (keyword) {
     filtered = filtered.filter(
       (s) =>
         (s.nomorSurat || "").toLowerCase().includes(keyword) ||
+        (s.nomorUmum || "").toLowerCase().includes(keyword) ||
+        (s.nomorKhusus || "").toLowerCase().includes(keyword) ||
         (s.perihal || "").toLowerCase().includes(keyword) ||
         (s.asalTujuan || "").toLowerCase().includes(keyword)
     );
@@ -412,8 +418,11 @@ function renderTable() {
     tbody.innerHTML += `
       <tr>
         <td>${i + 1}</td>
-        <td>${jenisBadge(s.jenisSurat)}</td>
+        <td>${jenisDataBadge(s.jenisData)}</td>
+        <td>${jenisSuratBadge(s.jenisSurat)}</td>
         <td>${escapeHtml(s.nomorSurat)}</td>
+        <td>${escapeHtml(s.nomorUmum) || "-"}</td>
+        <td>${escapeHtml(s.nomorKhusus) || "-"}</td>
         <td>${formatTanggal(s.tanggalSurat)}</td>
         <td>${escapeHtml(s.asalTujuan)}</td>
         <td>${escapeHtml(s.perihal)}</td>
@@ -457,8 +466,11 @@ function editSurat(id) {
   editId = id;
 
   document.getElementById("suratId").value = item.id;
+  document.getElementById("jenisData").value = item.jenisData;
   document.getElementById("jenisSurat").value = item.jenisSurat;
   document.getElementById("nomorSurat").value = item.nomorSurat;
+  document.getElementById("nomorUmum").value = item.nomorUmum;
+  document.getElementById("nomorKhusus").value = item.nomorKhusus;
   document.getElementById("tanggalSurat").value = item.tanggalSurat;
   document.getElementById("asalTujuan").value = item.asalTujuan;
   document.getElementById("perihal").value = item.perihal;
@@ -514,11 +526,18 @@ function showToast(message, type = "") {
 }
 
 /* ---------- HELPER FORMAT ---------- */
-function jenisBadge(jenis) {
+function jenisDataBadge(jenis) {
   if (jenis === "Surat Masuk") {
     return `<span class="badge badge-masuk"><i class="fa-solid fa-inbox"></i> Masuk</span>`;
   }
   return `<span class="badge badge-keluar"><i class="fa-solid fa-paper-plane"></i> Keluar</span>`;
+}
+
+function jenisSuratBadge(jenis) {
+  if (jenis === "Surat Umum") {
+    return `<span class="badge badge-umum"><i class="fa-solid fa-file-lines"></i> Umum</span>`;
+  }
+  return `<span class="badge badge-khusus"><i class="fa-solid fa-file-shield"></i> Khusus</span>`;
 }
 
 function statusBadge(status) {
