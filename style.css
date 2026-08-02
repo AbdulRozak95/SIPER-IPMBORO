@@ -659,6 +659,21 @@ tbody tr:hover { background: var(--blue-50); }
 .role-badge.admin { background: var(--warning-light); color: var(--warning); }
 .role-badge.user { background: var(--blue-100); color: var(--blue-700); }
 
+.dev-credit {
+  text-align: center;
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-top: 18px;
+  letter-spacing: 0.02em;
+}
+
+.dev-credit-sidebar {
+  color: rgba(255,255,255,0.5);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
 /* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
   .cards { grid-template-columns: 1fr; }
