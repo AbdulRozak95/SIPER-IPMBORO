@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ---------- CEK KONFIGURASI ---------- */
 function checkConfig() {
-  if (!API_URL || API_URL.includes("https://script.google.com/macros/s/AKfycbytMeeJiEHDZ-mX-3qS5BIwCg0c1AFZUvCHmol7R3ULnmZW2CGeg1N67sdJAuTSRyH0TQ/exec")) {
+  if (!API_URL || API_URL.includes("GANTI_DENGAN_URL")) {
     const content = document.querySelector(".content");
     const warning = document.createElement("div");
     warning.className = "config-warning";
