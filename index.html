@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPER IPM - Sistem Persuratan PD IPM Bojonegoro</title>
+<title>SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -154,7 +154,8 @@
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>Jenis</th>
+                  <th>Jenis Data</th>
+                  <th>Jenis Surat</th>
                   <th>Nomor Surat</th>
                   <th>Tanggal</th>
                   <th>Perihal</th>
@@ -178,17 +179,36 @@
             <input type="hidden" id="suratId">
 
             <div class="form-group">
-              <label for="jenisSurat">Jenis Surat</label>
-              <select id="jenisSurat" required>
-                <option value="">-- Pilih Jenis Surat --</option>
+              <label for="jenisData">Jenis Data</label>
+              <select id="jenisData" required>
+                <option value="">-- Pilih Jenis Data --</option>
                 <option value="Surat Masuk">Surat Masuk</option>
                 <option value="Surat Keluar">Surat Keluar</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="nomorSurat">Nomor Surat</label>
+              <label for="jenisSurat">Jenis Surat</label>
+              <select id="jenisSurat" required>
+                <option value="">-- Pilih Jenis Surat --</option>
+                <option value="Surat Umum">Surat Umum</option>
+                <option value="Surat Khusus">Surat Khusus</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="nomorSurat">Nomor Surat (Keseluruhan)</label>
               <input type="text" id="nomorSurat" placeholder="Contoh: 001/A/PD-IPM/2026" required>
+            </div>
+
+            <div class="form-group">
+              <label for="nomorUmum">Nomor Umum</label>
+              <input type="text" id="nomorUmum" placeholder="Nomor urut surat umum">
+            </div>
+
+            <div class="form-group">
+              <label for="nomorKhusus">Nomor Khusus</label>
+              <input type="text" id="nomorKhusus" placeholder="Nomor urut surat khusus">
             </div>
 
             <div class="form-group">
@@ -266,8 +286,11 @@
               <thead>
                 <tr>
                   <th>No</th>
+                  <th>Jenis Data</th>
                   <th>Jenis Surat</th>
                   <th>Nomor Surat</th>
+                  <th>Nomor Umum</th>
+                  <th>Nomor Khusus</th>
                   <th>Tanggal</th>
                   <th>Asal / Tujuan</th>
                   <th>Perihal</th>
