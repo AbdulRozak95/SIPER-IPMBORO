@@ -396,8 +396,9 @@ function renderTable() {
   const emptyState = document.getElementById("emptyState");
   const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
   const filterJenis = document.getElementById("filterJenis").value;
+  const sortBy = document.getElementById("sortBy").value;
 
-  let filtered = [...suratData].sort((a, b) => Number(b.id) - Number(a.id));
+  let filtered = [...suratData].sort(urutkanData(sortBy));
 
   if (filterJenis !== "Semua") {
     filtered = filtered.filter((s) => s.jenisData === filterJenis);
@@ -462,6 +463,39 @@ function renderTable() {
 function setupSearchFilter() {
   document.getElementById("searchInput").addEventListener("input", renderTable);
   document.getElementById("filterJenis").addEventListener("change", renderTable);
+  document.getElementById("sortBy").addEventListener("change", renderTable);
+}
+
+/* ---------- FUNGSI URUTKAN DATA ---------- */
+function urutkanData(sortBy) {
+  // Perbandingan angka & teks campuran (misal "001", "12A") tetap masuk akal
+  const bandingkanTeks = (a, b) =>
+    (a || "").localeCompare(b || "", undefined, { numeric: true, sensitivity: "base" });
+
+  switch (sortBy) {
+    case "input_desc":
+      return (a, b) => Number(b.id) - Number(a.id);
+    case "tanggal_asc":
+      return (a, b) => new Date(a.tanggalSurat) - new Date(b.tanggalSurat);
+    case "tanggal_desc":
+      return (a, b) => new Date(b.tanggalSurat) - new Date(a.tanggalSurat);
+    case "nomorUmum_asc":
+      return (a, b) => bandingkanTeks(a.nomorUmum, b.nomorUmum);
+    case "nomorUmum_desc":
+      return (a, b) => bandingkanTeks(b.nomorUmum, a.nomorUmum);
+    case "nomorKhusus_asc":
+      return (a, b) => bandingkanTeks(a.nomorKhusus, b.nomorKhusus);
+    case "nomorKhusus_desc":
+      return (a, b) => bandingkanTeks(b.nomorKhusus, a.nomorKhusus);
+    case "nomorSurat_asc":
+      return (a, b) => bandingkanTeks(a.nomorSurat, b.nomorSurat);
+    case "nomorSurat_desc":
+      return (a, b) => bandingkanTeks(b.nomorSurat, a.nomorSurat);
+    case "input_asc":
+    default:
+      // Default: input terbaru ditaruh di bagian bawah
+      return (a, b) => Number(a.id) - Number(b.id);
+  }
 }
 
 /* ---------- EDIT & HAPUS ---------- */
