@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro</title>
+<title>SIPER IPM - Sistem Persuratan PD IPM Bojonegoro</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -24,7 +24,7 @@
         <img src="" alt="Logo" id="loginLogoImg" class="logo-img" style="display:none;">
       </div>
       <h1>SIPER IPM</h1>
-      <p>Sistem Pengarsipan Surat PD IPM Bojonegoro</p>
+      <p>Sistem Persuratan PD IPM Bojonegoro</p>
     </div>
 
     <div class="login-tabs">
@@ -202,9 +202,10 @@
               </select>
             </div>
 
-            <div class="form-group">
+            <!-- Field ini hanya muncul untuk Surat Keluar -->
+            <div class="form-group surat-keluar-only">
               <label for="jenisSurat">Jenis Surat</label>
-              <select id="jenisSurat" required>
+              <select id="jenisSurat">
                 <option value="">-- Pilih Jenis Surat --</option>
                 <option value="Surat Umum">Surat Umum</option>
                 <option value="Surat Khusus">Surat Khusus</option>
@@ -216,12 +217,13 @@
               <input type="text" id="nomorSurat" placeholder="Contoh: 001/A/PD-IPM/2026" required>
             </div>
 
-            <div class="form-group">
+            <!-- Field ini hanya muncul untuk Surat Keluar -->
+            <div class="form-group surat-keluar-only">
               <label for="nomorUmum">Nomor Umum</label>
               <input type="text" id="nomorUmum" placeholder="Nomor urut surat umum">
             </div>
 
-            <div class="form-group">
+            <div class="form-group surat-keluar-only">
               <label for="nomorKhusus">Nomor Khusus</label>
               <input type="text" id="nomorKhusus" placeholder="Nomor urut surat khusus">
             </div>
