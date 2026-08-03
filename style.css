@@ -620,6 +620,33 @@ tbody tr:hover { background: var(--blue-50); }
 }
 .login-error.show { display: block; }
 
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 42px;
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 6px;
+  background: transparent;
+  border: none;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: var(--transition);
+}
+.btn-toggle-password:hover { color: var(--blue-600); background: var(--blue-100); }
+
 /* ================= USER INFO / LOGOUT (sidebar) ================= */
 .user-info {
   display: flex;
