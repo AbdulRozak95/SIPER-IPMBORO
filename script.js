@@ -1,5 +1,5 @@
 /* =======================================================
-   SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro
+   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
    Data disimpan bersama di Google Sheets lewat
    Google Apps Script (API).
 
@@ -8,7 +8,7 @@
    hasil Deploy dari Google Apps Script (lihat Code.gs).
 ======================================================= */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbybtmFWpb3SO9JVBUTP4dyEkaQiQYJHsb7Ldzc-yepFFQl7GLQ1cCCOLvPgvEDHcuRyaQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbytMeeJiEHDZ-mX-3qS5BIwCg0c1AFZUvCHmol7R3ULnmZW2CGeg1N67sdJAuTSRyH0TQ/exec";
 
 let suratData = [];
 let editId = null;
@@ -418,6 +418,18 @@ function setupForm() {
   const form = document.getElementById("formSurat");
   const btnReset = document.getElementById("btnReset");
   const btnSubmit = document.getElementById("btnSubmit");
+  const selectJenisData = document.getElementById("jenisData");
+
+  // Tampilkan/sembunyikan field khusus Surat Keluar
+  selectJenisData.addEventListener("change", () => {
+    // Kosongkan field yang disembunyikan agar tidak ikut tersimpan
+    if (selectJenisData.value !== "Surat Keluar") {
+      document.getElementById("jenisSurat").value = "";
+      document.getElementById("nomorUmum").value = "";
+      document.getElementById("nomorKhusus").value = "";
+    }
+    toggleJenisSuratFields();
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -468,6 +480,9 @@ function setupForm() {
   btnReset.addEventListener("click", () => {
     resetForm();
   });
+
+  // Set kondisi awal (field khusus Surat Keluar tersembunyi)
+  toggleJenisSuratFields();
 }
 
 function resetForm() {
@@ -480,6 +495,23 @@ function resetForm() {
   if (currentRole === "user") {
     document.getElementById("namaPenginput").value = currentName;
   }
+
+  toggleJenisSuratFields();
+}
+
+/* ---------- TAMPILKAN/SEMBUNYIKAN FIELD SESUAI JENIS DATA ---------- */
+function toggleJenisSuratFields() {
+  const jenisData = document.getElementById("jenisData").value;
+  const isKeluar = jenisData === "Surat Keluar";
+  const fields = document.querySelectorAll(".surat-keluar-only");
+  const selectJenisSurat = document.getElementById("jenisSurat");
+
+  fields.forEach((field) => {
+    field.style.display = isKeluar ? "flex" : "none";
+  });
+
+  // Jenis Surat wajib diisi hanya untuk Surat Keluar
+  selectJenisSurat.required = isKeluar;
 }
 
 /* ---------- RENDER DASHBOARD ---------- */
@@ -653,6 +685,7 @@ function editSurat(id) {
   document.getElementById("keterangan").value = item.keterangan;
 
   document.getElementById("formTitle").textContent = "Form Edit Surat";
+  toggleJenisSuratFields();
 
   document.querySelector('.menu-item[data-page="tambah"]').click();
 }
@@ -710,7 +743,10 @@ function jenisSuratBadge(jenis) {
   if (jenis === "Surat Umum") {
     return `<span class="badge badge-umum"><i class="fa-solid fa-file-lines"></i> Umum</span>`;
   }
-  return `<span class="badge badge-khusus"><i class="fa-solid fa-file-shield"></i> Khusus</span>`;
+  if (jenis === "Surat Khusus") {
+    return `<span class="badge badge-khusus"><i class="fa-solid fa-file-shield"></i> Khusus</span>`;
+  }
+  return `<span style="color:var(--gray-400); font-size:12px;">-</span>`;
 }
 
 function statusBadge(status) {
