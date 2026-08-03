@@ -68,6 +68,17 @@ function setupLogin() {
     });
   });
 
+  // Toggle tampilkan/sembunyikan password admin
+  const btnTogglePassword = document.getElementById("btnTogglePassword");
+  const inputPassword = document.getElementById("passwordAdmin");
+  btnTogglePassword.addEventListener("click", () => {
+    const isHidden = inputPassword.type === "password";
+    inputPassword.type = isHidden ? "text" : "password";
+    btnTogglePassword.innerHTML = isHidden
+      ? `<i class="fa-solid fa-eye-slash"></i>`
+      : `<i class="fa-solid fa-eye"></i>`;
+  });
+
   // Login sebagai Anggota (tanpa password)
   document.getElementById("formLoginUser").addEventListener("submit", (e) => {
     e.preventDefault();
