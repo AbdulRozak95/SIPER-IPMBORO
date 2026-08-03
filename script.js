@@ -1,5 +1,5 @@
 /* =======================================================
-   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
+   SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro
    Data disimpan bersama di Google Sheets lewat
    Google Apps Script (API).
 
@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupForm();
   setupSearchFilter();
   setupRefreshButton();
+  setupPengaturan();
+  fetchSettings();
 
   // Cek apakah sudah login sebelumnya (masih dalam sesi browser ini)
   const savedSession = sessionStorage.getItem("siperSession");
@@ -166,15 +168,18 @@ function masukKeAplikasi() {
   }
 
   const menuDashboard = document.querySelector('.menu-item[data-page="dashboard"]');
+  const menuPengaturan = document.getElementById("menuPengaturan");
 
   if (currentRole === "admin") {
     // Admin: akses penuh, mulai dari Dashboard
     menuDashboard.style.display = "flex";
+    menuPengaturan.style.display = "flex";
     document.querySelector('.menu-item[data-page="daftar"]').click();
     document.querySelector('.menu-item[data-page="dashboard"]').click();
   } else {
-    // Anggota: tidak bisa lihat Dashboard, langsung ke Daftar Surat
+    // Anggota: tidak bisa lihat Dashboard & Pengaturan, langsung ke Daftar Surat
     menuDashboard.style.display = "none";
+    menuPengaturan.style.display = "none";
     document.querySelector('.menu-item[data-page="daftar"]').click();
   }
 
@@ -242,6 +247,7 @@ function setupNavigation() {
         dashboard: "Dashboard",
         tambah: "Tambah Surat",
         daftar: "Daftar Surat",
+        pengaturan: "Pengaturan",
       };
       pageTitle.textContent = titles[target];
 
@@ -285,6 +291,125 @@ function setupRefreshButton() {
     await muatData();
     btn.classList.remove("spinning");
     showToast("Data berhasil dimuat ulang", "success");
+  });
+}
+
+/* ---------- LOGO APLIKASI (Pengaturan) ---------- */
+const MAX_LOGO_FILE_SIZE = 35 * 1024; // ~35 KB, aman untuk batas cell Google Sheets
+let selectedLogoBase64 = "";
+
+async function fetchSettings() {
+  if (!API_URL || API_URL.includes("GANTI_DENGAN_URL")) return;
+  try {
+    const res = await fetch(API_URL + "?action=settings");
+    const json = await res.json();
+    if (json.success && json.settings && json.settings.logo) {
+      applyLogo(json.settings.logo);
+    }
+  } catch (err) {
+    console.error("Gagal memuat pengaturan logo:", err);
+  }
+}
+
+function applyLogo(base64) {
+  const targets = [
+    { icon: "sidebarLogoIcon", img: "sidebarLogoImg" },
+    { icon: "loginLogoIcon", img: "loginLogoImg" },
+    { icon: "previewLogoIcon", img: "previewLogoImg" },
+  ];
+
+  targets.forEach(({ icon, img }) => {
+    const iconEl = document.getElementById(icon);
+    const imgEl = document.getElementById(img);
+    if (!iconEl || !imgEl) return;
+
+    if (base64) {
+      imgEl.src = base64;
+      imgEl.style.display = "block";
+      iconEl.style.display = "none";
+    } else {
+      imgEl.src = "";
+      imgEl.style.display = "none";
+      iconEl.style.display = "flex";
+    }
+  });
+}
+
+function setupPengaturan() {
+  const inputLogo = document.getElementById("inputLogo");
+  const btnSimpanLogo = document.getElementById("btnSimpanLogo");
+  const btnHapusLogo = document.getElementById("btnHapusLogo");
+
+  inputLogo.addEventListener("change", () => {
+    const file = inputLogo.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      showToast("File harus berupa gambar (JPG/PNG)", "error");
+      inputLogo.value = "";
+      return;
+    }
+
+    if (file.size > MAX_LOGO_FILE_SIZE) {
+      showToast("Ukuran gambar terlalu besar. Gunakan gambar di bawah 35 KB.", "error");
+      inputLogo.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      selectedLogoBase64 = reader.result;
+      applyLogo(selectedLogoBase64);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  btnSimpanLogo.addEventListener("click", async () => {
+    if (!selectedLogoBase64) {
+      showToast("Pilih gambar logo terlebih dahulu", "error");
+      return;
+    }
+
+    btnSimpanLogo.disabled = true;
+    btnSimpanLogo.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+    try {
+      const result = await kirimData({ action: "saveLogo", logo: selectedLogoBase64 });
+      if (result.success) {
+        showToast("Logo berhasil disimpan", "success");
+      } else {
+        showToast("Gagal menyimpan logo: " + (result.message || ""), "error");
+      }
+    } catch (err) {
+      showToast("Terjadi kesalahan saat menyimpan logo.", "error");
+      console.error(err);
+    }
+
+    btnSimpanLogo.disabled = false;
+    btnSimpanLogo.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Logo`;
+  });
+
+  btnHapusLogo.addEventListener("click", async () => {
+    if (!confirm("Yakin ingin menghapus logo dan kembali ke ikon default?")) return;
+
+    btnHapusLogo.disabled = true;
+
+    try {
+      const result = await kirimData({ action: "saveLogo", logo: "" });
+      if (result.success) {
+        selectedLogoBase64 = "";
+        inputLogo.value = "";
+        applyLogo("");
+        showToast("Logo berhasil dihapus, kembali ke default", "success");
+      } else {
+        showToast("Gagal menghapus logo: " + (result.message || ""), "error");
+      }
+    } catch (err) {
+      showToast("Terjadi kesalahan saat menghapus logo.", "error");
+      console.error(err);
+    }
+
+    btnHapusLogo.disabled = false;
   });
 }
 
