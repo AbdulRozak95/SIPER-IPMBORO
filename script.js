@@ -19,6 +19,15 @@ let currentRole = null;
 let currentName = "";
 let currentPassword = ""; // hanya diisi kalau login sebagai admin
 
+/* ---------- DAFTARKAN SERVICE WORKER (PWA) ---------- */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("service-worker.js")
+      .catch((err) => console.error("Gagal mendaftarkan service worker:", err));
+  });
+}
+
 /* ---------- INIT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   checkConfig();
@@ -312,6 +321,7 @@ async function fetchSettings() {
 }
 
 function applyLogo(base64) {
+  const DEFAULT_LOGO = "icons/logo-app.png";
   const targets = [
     { icon: "sidebarLogoIcon", img: "sidebarLogoImg" },
     { icon: "loginLogoIcon", img: "loginLogoImg" },
@@ -323,15 +333,9 @@ function applyLogo(base64) {
     const imgEl = document.getElementById(img);
     if (!iconEl || !imgEl) return;
 
-    if (base64) {
-      imgEl.src = base64;
-      imgEl.style.display = "block";
-      iconEl.style.display = "none";
-    } else {
-      imgEl.src = "";
-      imgEl.style.display = "none";
-      iconEl.style.display = "flex";
-    }
+    imgEl.src = base64 || DEFAULT_LOGO;
+    imgEl.style.display = "block";
+    iconEl.style.display = "none";
   });
 }
 
