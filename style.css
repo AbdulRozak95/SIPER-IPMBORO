@@ -78,9 +78,7 @@ body {
   width: 48px;
   height: 48px;
   object-fit: contain;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.15);
-  padding: 4px;
+  background: transparent;
 }
 
 .login-header .logo-wrapper {
@@ -92,8 +90,7 @@ body {
 .login-header .logo-img {
   width: 60px;
   height: 60px;
-  background: var(--blue-100);
-  padding: 6px;
+  background: transparent;
 }
 
 .sidebar-header h1 {
