@@ -8,7 +8,7 @@
    hasil Deploy dari Google Apps Script (lihat Code.gs).
 ======================================================= */
 
-const API_URL = "https://script.google.com/macros/s/AKfycbwnxX2UQGADy2xncPity-ww-Ep4l4skJsPr2ilbFRP1xlIHj3XTkvojrKYkUm4QiCtQ2A/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz7Oy0s7ZdiWf6xuPMgnFNbMl4epyk_YSO-TBCOP4TbGcJxk1dicf_Y4DwHHLAr0k12OA/exec";
 
 let suratData = [];
 let editId = null;
