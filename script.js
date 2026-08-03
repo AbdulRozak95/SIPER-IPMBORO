@@ -500,7 +500,7 @@ function resetForm() {
 }
 
 /* ---------- TAMPILKAN/SEMBUNYIKAN FIELD SESUAI JENIS DATA ---------- */
-function toggleJenisSuratFields() {
+function toggleJenisSuratFields(preselectStatus) {
   const jenisData = document.getElementById("jenisData").value;
   const isKeluar = jenisData === "Surat Keluar";
   const fields = document.querySelectorAll(".surat-keluar-only");
@@ -512,6 +512,29 @@ function toggleJenisSuratFields() {
 
   // Jenis Surat wajib diisi hanya untuk Surat Keluar
   selectJenisSurat.required = isKeluar;
+
+  updateStatusOptions(preselectStatus);
+}
+
+const STATUS_OPTIONS = {
+  "Surat Masuk": ["Diterima", "Diproses", "Selesai"],
+  "Surat Keluar": ["Draft", "Dikirim", "Selesai"],
+};
+
+function updateStatusOptions(preselectStatus) {
+  const jenisData = document.getElementById("jenisData").value;
+  const statusSelect = document.getElementById("status");
+  const options = STATUS_OPTIONS[jenisData] || STATUS_OPTIONS["Surat Keluar"];
+
+  let html = `<option value="">-- Pilih Status --</option>`;
+  options.forEach((opt) => {
+    html += `<option value="${opt}">${opt}</option>`;
+  });
+  statusSelect.innerHTML = html;
+
+  if (preselectStatus) {
+    statusSelect.value = preselectStatus;
+  }
 }
 
 /* ---------- RENDER DASHBOARD ---------- */
@@ -679,13 +702,12 @@ function editSurat(id) {
   document.getElementById("tanggalSurat").value = item.tanggalSurat;
   document.getElementById("asalTujuan").value = item.asalTujuan;
   document.getElementById("perihal").value = item.perihal;
-  document.getElementById("status").value = item.status;
   document.getElementById("namaPenginput").value = item.namaPenginput;
   document.getElementById("linkDrive").value = item.linkDrive;
   document.getElementById("keterangan").value = item.keterangan;
 
   document.getElementById("formTitle").textContent = "Form Edit Surat";
-  toggleJenisSuratFields();
+  toggleJenisSuratFields(item.status);
 
   document.querySelector('.menu-item[data-page="tambah"]').click();
 }
@@ -754,6 +776,8 @@ function statusBadge(status) {
     Draft: "badge-draft",
     Dikirim: "badge-dikirim",
     Selesai: "badge-selesai",
+    Diterima: "badge-dikirim",
+    Diproses: "badge-draft",
   };
   const cls = map[status] || "badge-draft";
   return `<span class="badge ${cls}">${escapeHtml(status)}</span>`;
