@@ -1,5 +1,5 @@
 /* =======================================================
-   SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro
+   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
    Data disimpan bersama di Google Sheets lewat
    Google Apps Script (API).
 
@@ -189,10 +189,13 @@ async function muatData() {
     const json = await res.json();
 
     if (json.success) {
-      suratData = json.data.map((item) => ({
-        ...item,
-        id: String(item.id),
-      }));
+      suratData = json.data.map((item) => {
+        const normalized = {};
+        Object.keys(item).forEach((key) => {
+          normalized[key] = item[key] === null || item[key] === undefined ? "" : String(item[key]);
+        });
+        return normalized;
+      });
     } else {
       showToast("Gagal memuat data: " + (json.message || ""), "error");
     }
@@ -407,11 +410,11 @@ function renderTable() {
   if (keyword) {
     filtered = filtered.filter(
       (s) =>
-        (s.nomorSurat || "").toLowerCase().includes(keyword) ||
-        (s.nomorUmum || "").toLowerCase().includes(keyword) ||
-        (s.nomorKhusus || "").toLowerCase().includes(keyword) ||
-        (s.perihal || "").toLowerCase().includes(keyword) ||
-        (s.asalTujuan || "").toLowerCase().includes(keyword)
+        String(s.nomorSurat || "").toLowerCase().includes(keyword) ||
+        String(s.nomorUmum || "").toLowerCase().includes(keyword) ||
+        String(s.nomorKhusus || "").toLowerCase().includes(keyword) ||
+        String(s.perihal || "").toLowerCase().includes(keyword) ||
+        String(s.asalTujuan || "").toLowerCase().includes(keyword)
     );
   }
 
@@ -470,7 +473,7 @@ function setupSearchFilter() {
 function urutkanData(sortBy) {
   // Perbandingan angka & teks campuran (misal "001", "12A") tetap masuk akal
   const bandingkanTeks = (a, b) =>
-    (a || "").localeCompare(b || "", undefined, { numeric: true, sensitivity: "base" });
+    String(a || "").localeCompare(String(b || ""), undefined, { numeric: true, sensitivity: "base" });
 
   switch (sortBy) {
     case "input_desc":
