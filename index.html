@@ -19,7 +19,10 @@
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <div class="login-header">
-      <i class="fa-solid fa-envelope-open-text logo-icon"></i>
+      <div class="logo-wrapper">
+        <i class="fa-solid fa-envelope-open-text logo-icon" id="loginLogoIcon"></i>
+        <img src="" alt="Logo" id="loginLogoImg" class="logo-img" style="display:none;">
+      </div>
       <h1>SIPER IPM</h1>
       <p>Sistem Pengarsipan Surat PD IPM Bojonegoro</p>
     </div>
@@ -71,7 +74,10 @@
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <i class="fa-solid fa-envelope-open-text logo-icon"></i>
+      <div class="logo-wrapper">
+        <i class="fa-solid fa-envelope-open-text logo-icon" id="sidebarLogoIcon"></i>
+        <img src="" alt="Logo" id="sidebarLogoImg" class="logo-img" style="display:none;">
+      </div>
       <div>
         <h1>SIPER IPM</h1>
         <p>PD IPM Bojonegoro</p>
@@ -90,6 +96,10 @@
       <button class="menu-item" data-page="daftar">
         <i class="fa-solid fa-list-ul"></i>
         <span>Daftar Surat</span>
+      </button>
+      <button class="menu-item" data-page="pengaturan" id="menuPengaturan" style="display:none;">
+        <i class="fa-solid fa-gear"></i>
+        <span>Pengaturan</span>
       </button>
     </nav>
 
@@ -322,6 +332,41 @@
               <i class="fa-solid fa-inbox"></i><br>
               Belum ada data surat.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== PAGE: PENGATURAN (Admin) ===================== -->
+      <section class="page" id="page-pengaturan">
+        <div class="panel">
+          <div class="panel-header">
+            <h3><i class="fa-solid fa-image"></i> Ganti Logo Aplikasi</h3>
+          </div>
+
+          <div class="logo-settings">
+            <div class="logo-preview" id="logoPreviewWrapper">
+              <i class="fa-solid fa-envelope-open-text logo-icon" id="previewLogoIcon"></i>
+              <img src="" alt="Preview Logo" id="previewLogoImg" style="display:none;">
+            </div>
+
+            <div class="logo-settings-form">
+              <label for="inputLogo" class="btn btn-secondary">
+                <i class="fa-solid fa-upload"></i> Pilih Gambar Logo
+              </label>
+              <input type="file" id="inputLogo" accept="image/*" style="display:none;">
+              <p class="login-hint" style="text-align:left; margin-top:8px;">
+                Format: JPG/PNG, ukuran file disarankan di bawah 30 KB (logo persegi/kotak lebih rapi).
+              </p>
+
+              <div class="form-actions" style="margin-top:16px;">
+                <button type="button" class="btn btn-primary" id="btnSimpanLogo">
+                  <i class="fa-solid fa-floppy-disk"></i> Simpan Logo
+                </button>
+                <button type="button" class="btn btn-secondary" id="btnHapusLogo">
+                  <i class="fa-solid fa-trash"></i> Hapus Logo (Pakai Default)
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
