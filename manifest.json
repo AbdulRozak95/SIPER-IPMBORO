@@ -1,5 +1,5 @@
 {
-  "name": "SIPER IPM - Sistem Persuratan PD IPM Bojonegoro",
+  "name": "SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro",
   "short_name": "SIPER IPM",
   "description": "Aplikasi arsip surat masuk dan surat keluar PD IPM Bojonegoro",
   "start_url": "./index.html",
