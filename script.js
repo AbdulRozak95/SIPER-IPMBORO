@@ -1,5 +1,5 @@
 /* =======================================================
-   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
+   SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro
    Data disimpan bersama di Google Sheets lewat
    Google Apps Script (API).
 
