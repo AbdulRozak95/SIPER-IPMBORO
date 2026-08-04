@@ -1,5 +1,5 @@
 /* =======================================================
-   SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro
+   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
    Data disimpan bersama di Google Sheets lewat
    Google Apps Script (API).
 
@@ -435,6 +435,11 @@ function setupForm() {
     toggleJenisSuratFields();
   });
 
+  // Tampilkan Nomor Umum / Nomor Khusus sesuai pilihan Jenis Surat
+  document.getElementById("jenisSurat").addEventListener("change", () => {
+    toggleJenisSuratFields();
+  });
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
@@ -506,16 +511,23 @@ function resetForm() {
 /* ---------- TAMPILKAN/SEMBUNYIKAN FIELD SESUAI JENIS DATA ---------- */
 function toggleJenisSuratFields(preselectStatus) {
   const jenisData = document.getElementById("jenisData").value;
+  const jenisSurat = document.getElementById("jenisSurat").value;
   const isKeluar = jenisData === "Surat Keluar";
-  const fields = document.querySelectorAll(".surat-keluar-only");
   const selectJenisSurat = document.getElementById("jenisSurat");
 
-  fields.forEach((field) => {
+  // Field Jenis Surat (dropdown Umum/Khusus) - hanya untuk Surat Keluar
+  document.querySelectorAll(".surat-keluar-only").forEach((field) => {
     field.style.display = isKeluar ? "flex" : "none";
   });
 
   // Jenis Surat wajib diisi hanya untuk Surat Keluar
   selectJenisSurat.required = isKeluar;
+
+  // Nomor Khusus hanya muncul kalau Jenis Surat = Surat Khusus
+  // (Nomor Umum tetap ikut aturan umum .surat-keluar-only di atas)
+  const showKhusus = isKeluar && jenisSurat === "Surat Khusus";
+  document.querySelector(".jenis-khusus-only").style.display = showKhusus ? "flex" : "none";
+  if (!showKhusus) document.getElementById("nomorKhusus").value = "";
 
   updateStatusOptions(preselectStatus);
 }
