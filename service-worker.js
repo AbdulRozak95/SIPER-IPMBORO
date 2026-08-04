@@ -7,7 +7,7 @@
    dari cache).
 ======================================================= */
 
-const CACHE_NAME = "siper-ipm-cache-v4";
+const CACHE_NAME = "siper-ipm-cache-v6";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
