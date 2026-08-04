@@ -228,13 +228,14 @@
               <input type="text" id="nomorSurat" placeholder="Contoh: 001/A/PD-IPM/2026" required>
             </div>
 
-            <!-- Field ini hanya muncul untuk Surat Keluar -->
+            <!-- Nomor Umum selalu muncul untuk Surat Keluar -->
             <div class="form-group surat-keluar-only">
               <label for="nomorUmum">Nomor Umum</label>
               <input type="text" id="nomorUmum" placeholder="Nomor urut surat umum">
             </div>
 
-            <div class="form-group surat-keluar-only">
+            <!-- Nomor Khusus hanya muncul kalau Jenis Surat = Surat Khusus -->
+            <div class="form-group surat-keluar-only jenis-khusus-only">
               <label for="nomorKhusus">Nomor Khusus</label>
               <input type="text" id="nomorKhusus" placeholder="Nomor urut surat khusus">
             </div>
