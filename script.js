@@ -1,5 +1,5 @@
 /* =======================================================
-   SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro
+   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
    Data disimpan bersama di Google Sheets lewat
    Google Apps Script (API).
 
@@ -9,6 +9,9 @@
 ======================================================= */
 
 const API_URL = "https://script.google.com/macros/s/AKfycbz7Oy0s7ZdiWf6xuPMgnFNbMl4epyk_YSO-TBCOP4TbGcJxk1dicf_Y4DwHHLAr0k12OA/exec";
+
+// Kunci akses API - HARUS SAMA PERSIS dengan APP_ACCESS_KEY di Code.gs
+const APP_ACCESS_KEY = "b_oUISejzLl1rMEXGn5Fj4lcxmcjtMuC";
 
 let suratData = [];
 let editId = null;
@@ -199,7 +202,7 @@ function masukKeAplikasi() {
 async function muatData() {
   showLoading(true);
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL + "?key=" + encodeURIComponent(APP_ACCESS_KEY));
     const json = await res.json();
 
     if (json.success) {
@@ -228,6 +231,9 @@ async function kirimData(payload) {
   if (currentPassword && !payload.password) {
     payload.password = currentPassword;
   }
+
+  // Sertakan kunci akses API di setiap permintaan
+  payload.key = APP_ACCESS_KEY;
 
   const res = await fetch(API_URL, {
     method: "POST",
@@ -310,7 +316,7 @@ let selectedLogoBase64 = "";
 async function fetchSettings() {
   if (!API_URL || API_URL.includes("GANTI_DENGAN_URL")) return;
   try {
-    const res = await fetch(API_URL + "?action=settings");
+    const res = await fetch(API_URL + "?action=settings&key=" + encodeURIComponent(APP_ACCESS_KEY));
     const json = await res.json();
     if (json.success && json.settings && json.settings.logo) {
       applyLogo(json.settings.logo);
