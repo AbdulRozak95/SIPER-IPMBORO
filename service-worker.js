@@ -1,13 +1,4 @@
-/* =======================================================
-   SIPER IPM - Service Worker
-   Menyimpan file tampilan (HTML/CSS/JS) di cache supaya
-   aplikasi tetap bisa dibuka walau koneksi lemah.
-   Data surat (dari Google Sheets) TETAP butuh internet,
-   karena itu selalu diambil langsung dari server (bukan
-   dari cache).
-======================================================= */
-
-const CACHE_NAME = "siper-ipm-cache-v6";
+const CACHE_NAME = "siper-ipm-cache-v7";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
