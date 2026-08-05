@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIPER IPM - Sistem Pengarsipan Surat PD IPM Bojonegoro</title>
+<title>SIPER IPM BORO - Sistem Pengarsipan Surat PD IPM Bojonegoro</title>
 
 <!-- PWA: bisa dipasang di HP seperti aplikasi -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b2f6b">
+<meta name="robots" content="noindex, nofollow">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SIPER IPM">
+<meta name="apple-mobile-web-app-title" content="SIPER IPM BORO">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/icon-192.png">
 
@@ -34,7 +35,7 @@
         <i class="fa-solid fa-envelope-open-text logo-icon" id="loginLogoIcon" style="display:none;"></i>
         <img src="icons/logo-app.png" alt="Logo" id="loginLogoImg" class="logo-img">
       </div>
-      <h1>SIPER IPM</h1>
+      <h1>SIPER IPM BORO</h1>
       <p>Sistem Pengarsipan Surat PD IPM Bojonegoro</p>
     </div>
 
@@ -53,6 +54,10 @@
         <label for="namaAnggota">Nama Anda</label>
         <input type="text" id="namaAnggota" placeholder="Masukkan nama Anda" required>
       </div>
+      <div class="form-group">
+        <label for="passwordAnggota">Password</label>
+        <input type="password" id="passwordAnggota" placeholder="Masukkan password bersama" required>
+      </div>
       <button type="submit" class="btn btn-primary btn-block">
         <i class="fa-solid fa-right-to-bracket"></i> Masuk sebagai Anggota
       </button>
@@ -62,7 +67,11 @@
     <!-- Form login sebagai Admin -->
     <form class="login-form" id="formLoginAdmin">
       <div class="form-group">
-        <label for="passwordAdmin">Password Admin</label>
+        <label for="usernameAdmin">Username</label>
+        <input type="text" id="usernameAdmin" placeholder="Masukkan username admin" required>
+      </div>
+      <div class="form-group">
+        <label for="passwordAdmin">Password</label>
         <div class="password-field">
           <input type="password" id="passwordAdmin" placeholder="Masukkan password admin" required>
           <button type="button" class="btn-toggle-password" id="btnTogglePassword" title="Tampilkan/Sembunyikan password">
@@ -90,7 +99,7 @@
         <img src="icons/logo-app.png" alt="Logo" id="sidebarLogoImg" class="logo-img">
       </div>
       <div>
-        <h1>SIPER IPM</h1>
+        <h1>SIPER IPM BORO</h1>
         <p>PD IPM Bojonegoro</p>
       </div>
     </div>
