@@ -7,7 +7,7 @@
    dari cache).
 ======================================================= */
 
-const CACHE_NAME = "siper-ipm-cache-v7";
+const CACHE_NAME = "siper-ipm-cache-v8";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
@@ -17,19 +17,25 @@ const FILE_TERCACHE = [
 ];
 
 // Simpan file utama ke cache saat pertama kali di-install.
-// Pakai cara "satu-satu" (bukan addAll) supaya kalau ada 1 file
-// gagal diambil, proses install TETAP lanjut (tidak gagal total).
+// Pakai cara yang lebih robust — tidak block install kalau ada file gagal.
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return Promise.allSettled(
-        FILE_TERCACHE.map((file) =>
-          cache.add(file).catch((err) => {
-            console.warn("Gagal cache file:", file, err);
-          })
-        )
-      );
-    })
+    (async () => {
+      try {
+        const cache = await caches.open(CACHE_NAME);
+        // Cache file satu-satu, jangan gunakan addAll (lebih permisif)
+        for (const file of FILE_TERCACHE) {
+          try {
+            await cache.add(file);
+          } catch (err) {
+            console.warn("Skip cache:", file, err);
+            // Lanjut ke file berikutnya, jangan stop
+          }
+        }
+      } catch (err) {
+        console.error("Cache setup error:", err);
+      }
+    })()
   );
   self.skipWaiting();
 });
