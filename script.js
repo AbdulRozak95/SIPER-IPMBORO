@@ -1,17 +1,17 @@
-/* =======================================================
-   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
-   Data disimpan bersama di Google Sheets lewat
-   Google Apps Script (API).
-
-   PENTING:
-   Ganti nilai API_URL di bawah ini dengan URL Web App
-   hasil Deploy dari Google Apps Script (lihat Code.gs).
-======================================================= */
-
 const API_URL = "https://script.google.com/macros/s/AKfycbz7Oy0s7ZdiWf6xuPMgnFNbMl4epyk_YSO-TBCOP4TbGcJxk1dicf_Y4DwHHLAr0k12OA/exec";
 
 // Kunci akses API - HARUS SAMA PERSIS dengan APP_ACCESS_KEY di Code.gs
 const APP_ACCESS_KEY = "b_oUISejzLl1rMEXGn5Fj4lcxmcjtMuC";
+
+// Kredensial Admin
+const ADMIN_USERNAME = "Admin";
+const ADMIN_PASSWORD = "ipminboro123";
+
+// Password bersama untuk Anggota
+const MEMBER_PASSWORD = "ipmboro";
+
+// Durasi sesi login (1 jam = 3600000 ms)
+const SESSION_DURATION_MS = 1 * 60 * 60 * 1000;
 
 let suratData = [];
 let editId = null;
@@ -93,11 +93,18 @@ function setupLogin() {
       : `<i class="fa-solid fa-eye"></i>`;
   });
 
-  // Login sebagai Anggota (tanpa password)
+  // Login sebagai Anggota (username bebas + password bersama)
   document.getElementById("formLoginUser").addEventListener("submit", (e) => {
     e.preventDefault();
     const nama = document.getElementById("namaAnggota").value.trim();
-    if (!nama) return;
+    const password = document.getElementById("passwordAnggota").value;
+    if (!nama || !password) return;
+
+    // Verifikasi password Anggota
+    if (password !== MEMBER_PASSWORD) {
+      showToast("Password Anggota salah", "error");
+      return;
+    }
 
     currentRole = "user";
     currentName = nama;
@@ -106,41 +113,28 @@ function setupLogin() {
     masukKeAplikasi();
   });
 
-  // Login sebagai Admin (dengan password, diverifikasi ke server)
+  // Login sebagai Admin (dengan username + password)
   const formAdmin = document.getElementById("formLoginAdmin");
   const btnLoginAdmin = document.getElementById("btnLoginAdmin");
 
-  formAdmin.addEventListener("submit", async (e) => {
+  formAdmin.addEventListener("submit", (e) => {
     e.preventDefault();
+    const username = document.getElementById("usernameAdmin").value;
     const password = document.getElementById("passwordAdmin").value;
-    if (!password) return;
+    if (!username || !password) return;
 
-    if (!API_URL || API_URL.includes("GANTI_DENGAN_URL")) {
-      showToast("API_URL belum dikonfigurasi. Lihat peringatan di bawah.", "error");
+    // Verifikasi username dan password Admin
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+      showToast("Username atau password admin salah", "error");
+      document.getElementById("passwordAdmin").value = "";
       return;
     }
 
-    btnLoginAdmin.disabled = true;
-    btnLoginAdmin.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Memeriksa...`;
-
-    try {
-      const result = await kirimData({ action: "login", password });
-      if (result.success) {
-        currentRole = "admin";
-        currentName = "Admin";
-        currentPassword = password;
-        simpanSesi();
-        masukKeAplikasi();
-      } else {
-        showToast(result.message || "Password admin salah", "error");
-      }
-    } catch (err) {
-      showToast("Gagal terhubung ke server. Periksa koneksi internet.", "error");
-      console.error(err);
-    }
-
-    btnLoginAdmin.disabled = false;
-    btnLoginAdmin.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk sebagai Admin`;
+    currentRole = "admin";
+    currentName = "Admin";
+    currentPassword = password;
+    simpanSesi();
+    masukKeAplikasi();
   });
 
   document.getElementById("btnLogout").addEventListener("click", () => {
@@ -196,6 +190,22 @@ function masukKeAplikasi() {
   }
 
   muatData();
+
+  // Simpan waktu login sekarang (dalam ms)
+  sessionStorage.setItem("siperLoginTime", Date.now().toString());
+
+  // Cek session expiry setiap 30 detik
+  setInterval(() => {
+    const loginTime = parseInt(sessionStorage.getItem("siperLoginTime"));
+    if (!loginTime) return;
+
+    const elapsedTime = Date.now() - loginTime;
+    if (elapsedTime > SESSION_DURATION_MS) {
+      // Session sudah expired, logout otomatis
+      showToast("Sesi login Anda telah berakhir (1 jam). Silakan login kembali.", "error");
+      keluarAplikasi();
+    }
+  }, 30000); // Cek setiap 30 detik
 }
 
 /* ---------- AMBIL DATA DARI GOOGLE SHEETS ---------- */
