@@ -39,50 +39,25 @@
       <p>Sistem Pengarsipan Surat PD IPM Bojonegoro</p>
     </div>
 
-    <div class="login-tabs">
-      <button class="login-tab active" data-tab="user">
-        <i class="fa-solid fa-user"></i> Anggota
-      </button>
-      <button class="login-tab" data-tab="admin">
-        <i class="fa-solid fa-user-shield"></i> Admin
-      </button>
-    </div>
-
-    <!-- Form login sebagai Anggota -->
-    <form class="login-form active" id="formLoginUser">
+    <!-- Unified Login Form -->
+    <form id="formLoginUnified">
       <div class="form-group">
-        <label for="namaAnggota">Nama Anda</label>
-        <input type="text" id="namaAnggota" placeholder="Masukkan nama Anda" required>
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Masukkan username Anda" required>
       </div>
       <div class="form-group">
-        <label for="passwordAnggota">Password</label>
-        <input type="password" id="passwordAnggota" placeholder="Masukkan password bersama" required>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block">
-        <i class="fa-solid fa-right-to-bracket"></i> Masuk sebagai Anggota
-      </button>
-      <p class="login-hint">Anggota dapat menambah &amp; melihat data surat.</p>
-    </form>
-
-    <!-- Form login sebagai Admin -->
-    <form class="login-form" id="formLoginAdmin">
-      <div class="form-group">
-        <label for="usernameAdmin">Username</label>
-        <input type="text" id="usernameAdmin" placeholder="Masukkan username admin" required>
-      </div>
-      <div class="form-group">
-        <label for="passwordAdmin">Password</label>
+        <label for="password">Password</label>
         <div class="password-field">
-          <input type="password" id="passwordAdmin" placeholder="Masukkan password admin" required>
+          <input type="password" id="password" placeholder="Masukkan password" required>
           <button type="button" class="btn-toggle-password" id="btnTogglePassword" title="Tampilkan/Sembunyikan password">
             <i class="fa-solid fa-eye"></i>
           </button>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary btn-block" id="btnLoginAdmin">
-        <i class="fa-solid fa-right-to-bracket"></i> Masuk sebagai Admin
+      <button type="submit" class="btn btn-primary btn-block">
+        <i class="fa-solid fa-right-to-bracket"></i> Masuk
       </button>
-      <p class="login-hint">Admin dapat melihat statistik, mengedit, dan menghapus data.</p>
+      <p class="login-hint">Masukkan username dan password untuk mengakses aplikasi.</p>
     </form>
 
     <p class="dev-credit">Developed by PD IPM Bojonegoro 2026/2028</p>
