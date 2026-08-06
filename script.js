@@ -1,3 +1,13 @@
+/* =======================================================
+   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
+   Data disimpan bersama di Google Sheets lewat
+   Google Apps Script (API).
+
+   PENTING:
+   Ganti nilai API_URL di bawah ini dengan URL Web App
+   hasil Deploy dari Google Apps Script (lihat Code.gs).
+======================================================= */
+
 const API_URL = "https://script.google.com/macros/s/AKfycbz7Oy0s7ZdiWf6xuPMgnFNbMl4epyk_YSO-TBCOP4TbGcJxk1dicf_Y4DwHHLAr0k12OA/exec";
 
 // Kunci akses API - HARUS SAMA PERSIS dengan APP_ACCESS_KEY di Code.gs
@@ -70,21 +80,12 @@ function checkConfig() {
 
 /* ---------- LOGIN ---------- */
 function setupLogin() {
-  const tabs = document.querySelectorAll(".login-tab");
-  const forms = document.querySelectorAll(".login-form");
-
-  tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      tabs.forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
-      forms.forEach((f) => f.classList.remove("active"));
-      document.getElementById("formLogin" + capitalize(tab.dataset.tab)).classList.add("active");
-    });
-  });
-
-  // Toggle tampilkan/sembunyikan password admin
+  const formLogin = document.getElementById("formLoginUnified");
+  const inputUsername = document.getElementById("username");
+  const inputPassword = document.getElementById("password");
   const btnTogglePassword = document.getElementById("btnTogglePassword");
-  const inputPassword = document.getElementById("passwordAdmin");
+
+  // Toggle tampilkan/sembunyikan password
   btnTogglePassword.addEventListener("click", () => {
     const isHidden = inputPassword.type === "password";
     inputPassword.type = isHidden ? "text" : "password";
@@ -93,48 +94,37 @@ function setupLogin() {
       : `<i class="fa-solid fa-eye"></i>`;
   });
 
-  // Login sebagai Anggota (username bebas + password bersama)
-  document.getElementById("formLoginUser").addEventListener("submit", (e) => {
+  // Unified login handler
+  formLogin.addEventListener("submit", (e) => {
     e.preventDefault();
-    const nama = document.getElementById("namaAnggota").value.trim();
-    const password = document.getElementById("passwordAnggota").value;
-    if (!nama || !password) return;
+    const username = inputUsername.value.trim();
+    const password = inputPassword.value;
 
-    // Verifikasi password Anggota
-    if (password !== MEMBER_PASSWORD) {
-      showToast("Password Anggota salah", "error");
-      return;
-    }
-
-    currentRole = "user";
-    currentName = nama;
-    currentPassword = "";
-    simpanSesi();
-    masukKeAplikasi();
-  });
-
-  // Login sebagai Admin (dengan username + password)
-  const formAdmin = document.getElementById("formLoginAdmin");
-  const btnLoginAdmin = document.getElementById("btnLoginAdmin");
-
-  formAdmin.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const username = document.getElementById("usernameAdmin").value;
-    const password = document.getElementById("passwordAdmin").value;
     if (!username || !password) return;
 
-    // Verifikasi username dan password Admin
-    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-      showToast("Username atau password admin salah", "error");
-      document.getElementById("passwordAdmin").value = "";
+    // Cek jika Admin
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      currentRole = "admin";
+      currentName = "Admin";
+      currentPassword = password;
+      simpanSesi();
+      masukKeAplikasi();
       return;
     }
 
-    currentRole = "admin";
-    currentName = "Admin";
-    currentPassword = password;
-    simpanSesi();
-    masukKeAplikasi();
+    // Cek jika Anggota (username ≠ Admin, password = member password)
+    if (username !== ADMIN_USERNAME && password === MEMBER_PASSWORD) {
+      currentRole = "user";
+      currentName = username; // Username menjadi Nama Penginput
+      currentPassword = "";
+      simpanSesi();
+      masukKeAplikasi();
+      return;
+    }
+
+    // Tidak cocok
+    showToast("Username atau password salah", "error");
+    inputPassword.value = "";
   });
 
   document.getElementById("btnLogout").addEventListener("click", () => {
