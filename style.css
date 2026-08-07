@@ -628,7 +628,7 @@ tbody tr:hover { background: var(--blue-50); }
   box-shadow: 0 2px 8px rgba(20,40,90,0.12);
 }
 
-.login-form { display: none; flex-direction: column; gap: 20px; }
+.login-form { display: none; flex-direction: column; gap: 16px; }
 .login-form.active { display: flex; }
 
 .btn-block { width: 100%; justify-content: center; }
@@ -653,6 +653,10 @@ tbody tr:hover { background: var(--blue-50); }
   position: relative;
   display: flex;
   align-items: center;
+}
+
+#formLoginUnified .password-field {
+  margin-bottom: 10px;
 }
 
 .password-field input {
