@@ -1,30 +1,28 @@
 {
-  "name": "SIPER IPM BORO - Sistem Pengarsipan Surat PD IPM Bojonegoro",
+  "name": "SIPER IPM BORO",
   "short_name": "SIPER IPM BORO",
-  "description": "Aplikasi arsip surat masuk dan surat keluar PD IPM Bojonegoro",
-  "start_url": "/SIPER-IPMBORO/",
-  "scope": "/SIPER-IPMBORO/",
+  "description": "Sistem Pengarsipan Surat PD IPM Bojonegoro",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
-  "background_color": "#ffffff",
+  "background_color": "#0b2f6b",
   "theme_color": "#0b2f6b",
   "icons": [
     {
-      "src": "/SIPER-IPMBORO/icons/icon-192.png",
+      "src": "./icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
-      "src": "/SIPER-IPMBORO/icons/icon-512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     }
   ],
   "screenshots": [
     {
-      "src": "/SIPER-IPMBORO/icons/icon-512.png",
+      "src": "./icons/splash-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "narrow"
