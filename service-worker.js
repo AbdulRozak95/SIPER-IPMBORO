@@ -7,13 +7,18 @@
    dari cache).
 ======================================================= */
 
-const CACHE_NAME = "siper-ipm-cache-v18";
+const CACHE_NAME = "siper-ipm-cache-v19";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
   "./script.js",
   "./manifest.json",
   "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/apple-touch-icon.png",
+  "./icons/logo-app.png",
+  "./icons/splash-icon-192.png",
+  "./icons/splash-icon-512.png",
 ];
 
 // Simpan file utama ke cache saat pertama kali di-install.
