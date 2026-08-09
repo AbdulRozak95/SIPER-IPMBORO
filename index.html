@@ -238,8 +238,10 @@
             </div>
 
             <div class="form-group full">
-              <label for="linkDrive">Link Google Drive (opsional)</label>
-              <input type="url" id="linkDrive" placeholder="https://drive.google.com/...">
+              <label for="fileSurat">Berkas Surat</label>
+              <input type="file" id="fileSurat" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+              <small class="file-hint">Format PDF, DOC, atau DOCX. Maksimal 10 MB. File akan otomatis diarsipkan ke Google Drive sesuai jenis, tahun, dan bulan surat.</small>
+              <div id="existingFile" class="existing-file" style="display:none;"></div>
             </div>
 
             <div class="form-group full">
@@ -303,6 +305,7 @@
                   <th>Perihal</th>
                   <th>Status</th>
                   <th>Penginput</th>
+                  <th>Berkas</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
