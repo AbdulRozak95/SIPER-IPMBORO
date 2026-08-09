@@ -1,38 +1,18 @@
-/* =======================================================
-   SIPER IPM - Sistem Persuratan PD IPM Bojonegoro
-   Data disimpan bersama di Google Sheets lewat
-   Google Apps Script (API).
-
-   PENTING:
-   Ganti nilai API_URL di bawah ini dengan URL Web App
-   hasil Deploy dari Google Apps Script (lihat Code.gs).
-======================================================= */
-
 const API_URL = "https://script.google.com/macros/s/AKfycbz7Oy0s7ZdiWf6xuPMgnFNbMl4epyk_YSO-TBCOP4TbGcJxk1dicf_Y4DwHHLAr0k12OA/exec";
-
-// Kunci akses API - HARUS SAMA PERSIS dengan APP_ACCESS_KEY di Code.gs
 const APP_ACCESS_KEY = "b_oUISejzLl1rMEXGn5Fj4lcxmcjtMuC";
-
-// Kredensial Admin
 const ADMIN_USERNAME = "Admin";
 const ADMIN_PASSWORD = "ipminboro123";
-
-// Password bersama untuk Anggota
 const MEMBER_PASSWORD = "ipmboro";
-
-// Durasi sesi login (1 jam = 3600000 ms)
 const SESSION_DURATION_MS = 1 * 60 * 60 * 1000;
 
 let suratData = [];
 let editId = null;
 let isSubmitting = false;
 
-// role: "admin" | "user" | null
 let currentRole = null;
 let currentName = "";
 let currentPassword = ""; // hanya diisi kalau login sebagai admin
 
-/* ---------- DAFTARKAN SERVICE WORKER (PWA) ---------- */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
@@ -41,7 +21,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-/* ---------- INIT ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   checkConfig();
   setupLogin();
@@ -53,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupPengaturan();
   fetchSettings();
 
-  // Cek apakah sudah login sebelumnya (masih dalam sesi browser ini)
   const savedSession = sessionStorage.getItem("siperSession");
   if (savedSession) {
     const session = JSON.parse(savedSession);
@@ -64,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-/* ---------- CEK KONFIGURASI ---------- */
 function checkConfig() {
   if (!API_URL || API_URL.includes("GANTI_DENGAN_URL")) {
     const content = document.querySelector(".content");
@@ -78,14 +55,12 @@ function checkConfig() {
   }
 }
 
-/* ---------- LOGIN ---------- */
 function setupLogin() {
   const formLogin = document.getElementById("formLoginUnified");
   const inputUsername = document.getElementById("username");
   const inputPassword = document.getElementById("password");
   const btnTogglePassword = document.getElementById("btnTogglePassword");
 
-  // Toggle tampilkan/sembunyikan password
   btnTogglePassword.addEventListener("click", () => {
     const isHidden = inputPassword.type === "password";
     inputPassword.type = isHidden ? "text" : "password";
@@ -94,7 +69,6 @@ function setupLogin() {
       : `<i class="fa-solid fa-eye"></i>`;
   });
 
-  // Unified login handler
   formLogin.addEventListener("submit", (e) => {
     e.preventDefault();
     const username = inputUsername.value.trim();
@@ -102,7 +76,6 @@ function setupLogin() {
 
     if (!username || !password) return;
 
-    // Cek jika Admin
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       currentRole = "admin";
       currentName = "Admin";
@@ -112,7 +85,6 @@ function setupLogin() {
       return;
     }
 
-    // Cek jika Anggota (username ≠ Admin, password = member password)
     if (username !== ADMIN_USERNAME && password === MEMBER_PASSWORD) {
       currentRole = "user";
       currentName = username; // Username menjadi Nama Penginput
@@ -122,7 +94,6 @@ function setupLogin() {
       return;
     }
 
-    // Tidak cocok
     showToast("Username atau password salah", "error");
     inputPassword.value = "";
   });
@@ -145,7 +116,6 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-/* ---------- MASUK KE APLIKASI SESUAI ROLE ---------- */
 function masukKeAplikasi() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("appScreen").style.display = "flex";
@@ -156,7 +126,6 @@ function masukKeAplikasi() {
       ? `<span class="role-badge admin">Admin</span>`
       : `<span class="role-badge user">Anggota</span>`;
 
-  // Prefill & kunci nama penginput untuk anggota (agar sesuai nama saat login)
   if (currentRole === "user") {
     const inputNama = document.getElementById("namaPenginput");
     inputNama.value = currentName;
@@ -167,13 +136,11 @@ function masukKeAplikasi() {
   const menuPengaturan = document.getElementById("menuPengaturan");
 
   if (currentRole === "admin") {
-    // Admin: akses penuh, mulai dari Dashboard
     menuDashboard.style.display = "flex";
     menuPengaturan.style.display = "flex";
     document.querySelector('.menu-item[data-page="daftar"]').click();
     document.querySelector('.menu-item[data-page="dashboard"]').click();
   } else {
-    // Anggota: tidak bisa lihat Dashboard & Pengaturan, langsung ke Daftar Surat
     menuDashboard.style.display = "none";
     menuPengaturan.style.display = "none";
     document.querySelector('.menu-item[data-page="daftar"]').click();
@@ -181,24 +148,20 @@ function masukKeAplikasi() {
 
   muatData();
 
-  // Simpan waktu login sekarang (dalam ms)
   sessionStorage.setItem("siperLoginTime", Date.now().toString());
 
-  // Cek session expiry setiap 30 detik
   setInterval(() => {
     const loginTime = parseInt(sessionStorage.getItem("siperLoginTime"));
     if (!loginTime) return;
 
     const elapsedTime = Date.now() - loginTime;
     if (elapsedTime > SESSION_DURATION_MS) {
-      // Session sudah expired, logout otomatis
       showToast("Sesi login Anda telah berakhir (1 jam). Silakan login kembali.", "error");
       keluarAplikasi();
     }
   }, 30000); // Cek setiap 30 detik
 }
 
-/* ---------- AMBIL DATA DARI GOOGLE SHEETS ---------- */
 async function muatData() {
   showLoading(true);
   try {
@@ -225,14 +188,12 @@ async function muatData() {
   renderTable();
 }
 
-/* ---------- KIRIM DATA (add/update/delete) ---------- */
 async function kirimData(payload) {
   // Sertakan password admin (jika ada) untuk aksi yang perlu verifikasi
   if (currentPassword && !payload.password) {
     payload.password = currentPassword;
   }
 
-  // Sertakan kunci akses API di setiap permintaan
   payload.key = APP_ACCESS_KEY;
 
   const res = await fetch(API_URL, {
@@ -243,7 +204,6 @@ async function kirimData(payload) {
   return res.json();
 }
 
-/* ---------- NAVIGASI MENU ---------- */
 function setupNavigation() {
   const menuItems = document.querySelectorAll(".menu-item");
   const pageTitle = document.getElementById("pageTitle");
@@ -279,7 +239,6 @@ function setupNavigation() {
   });
 }
 
-/* ---------- SIDEBAR TOGGLE (mobile) ---------- */
 function setupSidebarToggle() {
   const sidebar = document.getElementById("sidebar");
   const btnHamburger = document.getElementById("btnHamburger");
@@ -298,7 +257,6 @@ function closeSidebarMobile() {
   document.getElementById("overlay").classList.remove("show");
 }
 
-/* ---------- TOMBOL REFRESH ---------- */
 function setupRefreshButton() {
   const btn = document.getElementById("btnRefresh");
   btn.addEventListener("click", async () => {
@@ -309,7 +267,6 @@ function setupRefreshButton() {
   });
 }
 
-/* ---------- LOGO APLIKASI (Pengaturan) ---------- */
 const MAX_LOGO_FILE_SIZE = 35 * 1024; // ~35 KB, aman untuk batas cell Google Sheets
 let selectedLogoBase64 = "";
 
@@ -423,16 +380,13 @@ function setupPengaturan() {
   });
 }
 
-/* ---------- FORM TAMBAH / EDIT SURAT ---------- */
 function setupForm() {
   const form = document.getElementById("formSurat");
   const btnReset = document.getElementById("btnReset");
   const btnSubmit = document.getElementById("btnSubmit");
   const selectJenisData = document.getElementById("jenisData");
 
-  // Tampilkan/sembunyikan field khusus Surat Keluar
   selectJenisData.addEventListener("change", () => {
-    // Kosongkan field yang disembunyikan agar tidak ikut tersimpan
     if (selectJenisData.value !== "Surat Keluar") {
       document.getElementById("jenisSurat").value = "";
       document.getElementById("nomorUmum").value = "";
@@ -441,7 +395,6 @@ function setupForm() {
     toggleJenisSuratFields();
   });
 
-  // Tampilkan Nomor Umum / Nomor Khusus sesuai pilihan Jenis Surat
   document.getElementById("jenisSurat").addEventListener("change", () => {
     toggleJenisSuratFields();
   });
@@ -496,7 +449,6 @@ function setupForm() {
     resetForm();
   });
 
-  // Set kondisi awal (field khusus Surat Keluar tersembunyi)
   toggleJenisSuratFields();
 }
 
@@ -506,7 +458,6 @@ function resetForm() {
   editId = null;
   document.getElementById("formTitle").textContent = "Form Tambah Surat";
 
-  // Anggota: nama penginput tetap terisi & terkunci
   if (currentRole === "user") {
     document.getElementById("namaPenginput").value = currentName;
   }
@@ -514,23 +465,18 @@ function resetForm() {
   toggleJenisSuratFields();
 }
 
-/* ---------- TAMPILKAN/SEMBUNYIKAN FIELD SESUAI JENIS DATA ---------- */
 function toggleJenisSuratFields(preselectStatus) {
   const jenisData = document.getElementById("jenisData").value;
   const jenisSurat = document.getElementById("jenisSurat").value;
   const isKeluar = jenisData === "Surat Keluar";
   const selectJenisSurat = document.getElementById("jenisSurat");
 
-  // Field Jenis Surat (dropdown Umum/Khusus) - hanya untuk Surat Keluar
   document.querySelectorAll(".surat-keluar-only").forEach((field) => {
     field.style.display = isKeluar ? "flex" : "none";
   });
 
-  // Jenis Surat wajib diisi hanya untuk Surat Keluar
   selectJenisSurat.required = isKeluar;
 
-  // Nomor Khusus hanya muncul kalau Jenis Surat = Surat Khusus
-  // (Nomor Umum tetap ikut aturan umum .surat-keluar-only di atas)
   const showKhusus = isKeluar && jenisSurat === "Surat Khusus";
   document.querySelector(".jenis-khusus-only").style.display = showKhusus ? "flex" : "none";
   if (!showKhusus) document.getElementById("nomorKhusus").value = "";
@@ -559,7 +505,6 @@ function updateStatusOptions(preselectStatus) {
   }
 }
 
-/* ---------- RENDER DASHBOARD ---------- */
 function renderDashboard() {
   const masuk = suratData.filter((s) => s.jenisData === "Surat Masuk").length;
   const keluar = suratData.filter((s) => s.jenisData === "Surat Keluar").length;
@@ -595,7 +540,6 @@ function renderDashboard() {
   });
 }
 
-/* ---------- RENDER TABEL DAFTAR SURAT ---------- */
 function renderTable() {
   const tbody = document.querySelector("#tableSurat tbody");
   const emptyState = document.getElementById("emptyState");
@@ -664,16 +608,13 @@ function renderTable() {
   });
 }
 
-/* ---------- SEARCH & FILTER ---------- */
 function setupSearchFilter() {
   document.getElementById("searchInput").addEventListener("input", renderTable);
   document.getElementById("filterJenis").addEventListener("change", renderTable);
   document.getElementById("sortBy").addEventListener("change", renderTable);
 }
 
-/* ---------- FUNGSI URUTKAN DATA ---------- */
 function urutkanData(sortBy) {
-  // Perbandingan angka & teks campuran (misal "001", "12A") tetap masuk akal
   const bandingkanTeks = (a, b) =>
     String(a || "").localeCompare(String(b || ""), undefined, { numeric: true, sensitivity: "base" });
 
@@ -698,12 +639,10 @@ function urutkanData(sortBy) {
       return (a, b) => bandingkanTeks(b.nomorSurat, a.nomorSurat);
     case "input_asc":
     default:
-      // Default: input terbaru ditaruh di bagian bawah
       return (a, b) => Number(a.id) - Number(b.id);
   }
 }
 
-/* ---------- EDIT & HAPUS ---------- */
 function editSurat(id) {
   if (currentRole !== "admin") {
     showToast("Hanya Admin yang dapat mengedit data", "error");
@@ -758,7 +697,6 @@ async function hapusSurat(id) {
   showLoading(false);
 }
 
-/* ---------- HELPER UI ---------- */
 function showLoading(state) {
   document.getElementById("loadingOverlay").classList.toggle("show", state);
 }
@@ -775,7 +713,6 @@ function showToast(message, type = "") {
   }, 3500);
 }
 
-/* ---------- HELPER FORMAT ---------- */
 function jenisDataBadge(jenis) {
   if (jenis === "Surat Masuk") {
     return `<span class="badge badge-masuk"><i class="fa-solid fa-inbox"></i> Masuk</span>`;
