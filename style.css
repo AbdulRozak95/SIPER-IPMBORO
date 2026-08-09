@@ -268,7 +268,6 @@ body {
 .card-info h3 { font-size: 26px; font-weight: 700; }
 .card-info p { font-size: 13px; opacity: 0.9; }
 
-/* ================= PANEL ================= */
 .panel {
   background: var(--white);
   border-radius: var(--radius);
@@ -339,7 +338,7 @@ body {
   gap: 18px;
 }
 
-.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
 .form-group.full { grid-column: 1 / -1; }
 
 .form-group label {
