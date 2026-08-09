@@ -1,12 +1,3 @@
-/* =======================================================
-   SIPER IPM - Service Worker
-   Menyimpan file tampilan (HTML/CSS/JS) di cache supaya
-   aplikasi tetap bisa dibuka walau koneksi lemah.
-   Data surat (dari Google Sheets) TETAP butuh internet,
-   karena itu selalu diambil langsung dari server (bukan
-   dari cache).
-======================================================= */
-
 const CACHE_NAME = "siper-ipm-cache-v20";
 const FILE_TERCACHE = [
   "./index.html",
@@ -21,8 +12,6 @@ const FILE_TERCACHE = [
   "./icons/splash-icon-512.png",
 ];
 
-// Simpan file utama ke cache saat pertama kali di-install.
-// Pakai cara yang lebih robust — tidak block install kalau ada file gagal.
 self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
@@ -34,7 +23,6 @@ self.addEventListener("install", (event) => {
             await cache.add(file);
           } catch (err) {
             console.warn("Skip cache:", file, err);
-            // Lanjut ke file berikutnya, jangan stop
           }
         }
       } catch (err) {
@@ -45,7 +33,6 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Bersihkan cache versi lama saat ada update
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -59,12 +46,9 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Strategi: file statis (html/css/js/ikon) pakai cache dulu,
-// tapi permintaan ke Google Apps Script (data) selalu ke internet langsung.
 self.addEventListener("fetch", (event) => {
   const url = event.request.url;
 
-  // Jangan cache permintaan ke API (Google Apps Script) atau CDN eksternal
   if (url.includes("script.google.com") || url.includes("cdnjs.cloudflare.com")) {
     return;
   }
@@ -75,7 +59,6 @@ self.addEventListener("fetch", (event) => {
 
       return fetch(event.request)
         .then((response) => {
-          // Hanya cache respons yang valid (status 200, tipe basic/cors)
           if (response && response.status === 200) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
@@ -83,7 +66,6 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          // Offline & tidak ada di cache -> biarkan browser tampilkan error biasa
           return new Response("Offline dan file belum tersimpan di cache.", {
             status: 503,
             statusText: "Offline",
