@@ -1,4 +1,4 @@
-const CACHE_NAME = "siper-ipm-cache-v23";
+const CACHE_NAME = "siper-ipm-cache-v24";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
@@ -17,6 +17,7 @@ self.addEventListener("install", (event) => {
     (async () => {
       try {
         const cache = await caches.open(CACHE_NAME);
+        // Cache file satu-satu, jangan gunakan addAll (lebih permisif)
         for (const file of FILE_TERCACHE) {
           try {
             await cache.add(file);
