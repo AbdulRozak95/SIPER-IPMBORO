@@ -8,6 +8,7 @@ const SESSION_DURATION_MS = 1 * 60 * 60 * 1000;
 let suratData = [];
 let editId = null;
 let isSubmitting = false;
+
 let currentRole = null;
 let currentName = "";
 let currentPassword = ""; // hanya diisi kalau login sebagai admin
@@ -379,6 +380,46 @@ function setupPengaturan() {
   });
 }
 
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const comma = result.indexOf(",");
+      resolve({
+        name: file.name,
+        mimeType: file.type || mimeTypeFromExtension(file.name),
+        base64: comma >= 0 ? result.slice(comma + 1) : result
+      });
+    };
+    reader.onerror = () => reject(new Error("Gagal membaca file."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function mimeTypeFromExtension(name) {
+  const ext = String(name).toLowerCase().split(".").pop();
+  if (ext === "pdf") return "application/pdf";
+  if (ext === "doc") return "application/msword";
+  return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+}
+
+function getDriveFileId(url) {
+  const value = String(url || "");
+  const match = value.match(/\/d\/([a-zA-Z0-9_-]+)/) || value.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  return match ? match[1] : "";
+}
+
+function drivePreviewUrl(url) {
+  const id = getDriveFileId(url);
+  return id ? `https://drive.google.com/file/d/${id}/preview` : url;
+}
+
+function driveDownloadUrl(url) {
+  const id = getDriveFileId(url);
+  return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
+}
+
 function setupForm() {
   const form = document.getElementById("formSurat");
   const btnReset = document.getElementById("btnReset");
@@ -402,6 +443,43 @@ function setupForm() {
     e.preventDefault();
     if (isSubmitting) return;
 
+    const fileInput = document.getElementById("fileSurat");
+    const selectedFile = fileInput.files[0] || null;
+    const existingItem = editId !== null ? suratData.find((s) => String(s.id) === String(editId)) : null;
+
+    if (!document.getElementById("jenisData").value) {
+      showToast("Pilih jenis data surat terlebih dahulu.", "error");
+      return;
+    }
+
+    if (!document.getElementById("tanggalSurat").value) {
+      showToast("Tanggal surat wajib diisi.", "error");
+      return;
+    }
+
+    if (!document.getElementById("asalTujuan").value.trim()) {
+      showToast("Asal / Tujuan wajib diisi.", "error");
+      return;
+    }
+
+    if (!document.getElementById("perihal").value.trim()) {
+      showToast("Perihal wajib diisi.", "error");
+      return;
+    }
+
+    if (selectedFile) {
+      const allowed = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+      const ext = selectedFile.name.toLowerCase().split(".").pop();
+      if (!allowed.includes(selectedFile.type) && !["pdf", "doc", "docx"].includes(ext)) {
+        showToast("File harus PDF, DOC, atau DOCX.", "error");
+        return;
+      }
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        showToast("Ukuran file maksimal 10 MB.", "error");
+        return;
+      }
+    }
+
     const item = {
       id: editId !== null ? editId : String(Date.now()),
       jenisData: document.getElementById("jenisData").value,
@@ -414,7 +492,7 @@ function setupForm() {
       perihal: document.getElementById("perihal").value.trim(),
       status: document.getElementById("status").value,
       namaPenginput: document.getElementById("namaPenginput").value.trim(),
-      linkDrive: document.getElementById("linkDrive").value.trim(),
+      linkDrive: existingItem ? (existingItem.linkDrive || "") : "",
       keterangan: document.getElementById("keterangan").value.trim(),
     };
 
@@ -424,7 +502,8 @@ function setupForm() {
 
     try {
       const action = editId !== null ? "update" : "add";
-      const result = await kirimData({ action, data: item });
+      const fileData = selectedFile ? await fileToBase64(selectedFile) : null;
+      const result = await kirimData({ action, data: item, file: fileData });
 
       if (result.success) {
         showToast(editId !== null ? "Surat berhasil diperbarui" : "Surat berhasil disimpan", "success");
@@ -456,6 +535,11 @@ function resetForm() {
   document.getElementById("suratId").value = "";
   editId = null;
   document.getElementById("formTitle").textContent = "Form Tambah Surat";
+  const existingFile = document.getElementById("existingFile");
+  if (existingFile) {
+    existingFile.style.display = "none";
+    existingFile.innerHTML = "";
+  }
 
   if (currentRole === "user") {
     document.getElementById("namaPenginput").value = currentName;
@@ -589,6 +673,16 @@ function renderTable() {
         <td>${statusBadge(s.status)}</td>
         <td>${escapeHtml(s.namaPenginput)}</td>
         <td>
+          ${s.linkDrive ? `<div class="file-actions">
+            <a class="btn-icon btn-file" href="${escapeHtml(drivePreviewUrl(s.linkDrive))}" target="_blank" rel="noopener" title="Preview">
+              <i class="fa-solid fa-eye"></i>
+            </a>
+            ${isAdmin ? `<a class="btn-icon btn-download" href="${escapeHtml(driveDownloadUrl(s.linkDrive))}" target="_blank" rel="noopener" title="Download">
+              <i class="fa-solid fa-download"></i>
+            </a>` : ""}
+          </div>` : `<span style="color:var(--gray-400); font-size:12px;">-</span>`}
+        </td>
+        <td>
           ${
             isAdmin
               ? `<div class="action-btns">
@@ -663,7 +757,14 @@ function editSurat(id) {
   document.getElementById("asalTujuan").value = item.asalTujuan;
   document.getElementById("perihal").value = item.perihal;
   document.getElementById("namaPenginput").value = item.namaPenginput;
-  document.getElementById("linkDrive").value = item.linkDrive;
+  const existingFile = document.getElementById("existingFile");
+  if (item.linkDrive) {
+    existingFile.style.display = "block";
+    existingFile.innerHTML = `<i class="fa-solid fa-file-lines"></i> Berkas tersimpan: <a class="link-drive" href="${escapeHtml(item.linkDrive)}" target="_blank" rel="noopener">Lihat di Google Drive</a>`;
+  } else {
+    existingFile.style.display = "none";
+    existingFile.innerHTML = "";
+  }
   document.getElementById("keterangan").value = item.keterangan;
 
   document.getElementById("formTitle").textContent = "Form Edit Surat";
