@@ -777,3 +777,9 @@ tbody tr:hover { background: var(--blue-50); }
   .toolbar-actions { width: 100%; }
   .panel-header.toolbar { flex-direction: column; align-items: stretch; }
 }
+
+.file-hint { display:block; margin-top:6px; color:var(--gray-500); font-size:12px; line-height:1.5; }
+.existing-file { margin-top:8px; padding:8px 10px; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; font-size:12px; }
+.file-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.btn-file { background:var(--blue-100); color:var(--blue-700); }
+.btn-download { background:var(--success-light); color:var(--success); }
