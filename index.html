@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPER IPM BORO - Sistem Pengarsipan Surat PD IPM Bojonegoro</title>
 
-<!-- PWA: bisa dipasang di HP seperti aplikasi  -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b2f6b">
 <meta name="robots" content="noindex, nofollow">
@@ -15,19 +14,13 @@
 <meta name="apple-mobile-web-app-title" content="SIPER IPM BORO">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="icons/icon-192.png">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- Overlay untuk mobile -->
 <div class="overlay" id="overlay"></div>
-
-<!-- Toast notifikasi -->
 <div class="toast" id="toast"></div>
-
-<!-- ===================== LOGIN SCREEN ===================== -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <div class="login-header">
@@ -39,7 +32,6 @@
       <p>Sistem Pengarsipan Surat PD IPM Bojonegoro</p>
     </div>
 
-    <!-- Unified Login Form -->
     <form id="formLoginUnified">
       <div class="form-group">
         <label for="username">Username</label>
@@ -66,7 +58,6 @@
 
 <div class="app" id="appScreen" style="display:none;">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="logo-wrapper">
@@ -113,7 +104,6 @@
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
   <div class="main">
 
     <header class="topbar">
@@ -128,8 +118,6 @@
     </header>
 
     <main class="content">
-
-      <!-- ===================== PAGE: DASHBOARD ===================== -->
       <section class="page active" id="page-dashboard">
         <div class="cards">
           <div class="card card-blue">
@@ -177,8 +165,6 @@
           </div>
         </div>
       </section>
-
-      <!-- ===================== PAGE: TAMBAH SURAT ===================== -->
       <section class="page" id="page-tambah">
         <div class="panel">
           <div class="panel-header">
@@ -197,7 +183,6 @@
               </select>
             </div>
 
-            <!-- Field ini hanya muncul untuk Surat Keluar -->
             <div class="form-group surat-keluar-only">
               <label for="jenisSurat">Jenis Surat</label>
               <select id="jenisSurat">
@@ -212,13 +197,11 @@
               <input type="text" id="nomorSurat" placeholder="Contoh: A.1-XIII/PD IPM-001/2026" required>
             </div>
 
-            <!-- Nomor Umum selalu muncul untuk Surat Keluar -->
             <div class="form-group surat-keluar-only">
               <label for="nomorUmum">Nomor Umum</label>
               <input type="text" id="nomorUmum" placeholder="Nomor urut surat umum">
             </div>
 
-            <!-- Nomor Khusus hanya muncul kalau Jenis Surat = Surat Khusus -->
             <div class="form-group surat-keluar-only jenis-khusus-only">
               <label for="nomorKhusus">Nomor Khusus</label>
               <input type="text" id="nomorKhusus" placeholder="Nomor urut surat khusus">
@@ -276,7 +259,6 @@
         </div>
       </section>
 
-      <!-- ===================== PAGE: DAFTAR SURAT ===================== -->
       <section class="page" id="page-daftar">
         <div class="panel">
           <div class="panel-header toolbar">
@@ -334,7 +316,6 @@
         </div>
       </section>
 
-      <!-- ===================== PAGE: PENGATURAN (Admin) ===================== -->
       <section class="page" id="page-pengaturan">
         <div class="panel">
           <div class="panel-header">
@@ -373,7 +354,6 @@
   </div>
 </div>
 
-<!-- Loading overlay -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <p>Memuat data...</p>
