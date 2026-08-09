@@ -8,10 +8,9 @@ const SESSION_DURATION_MS = 1 * 60 * 60 * 1000;
 let suratData = [];
 let editId = null;
 let isSubmitting = false;
-
 let currentRole = null;
 let currentName = "";
-let currentPassword = ""; // hanya diisi kalau login sebagai admin
+let currentPassword = "";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
