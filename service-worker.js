@@ -1,15 +1,10 @@
-const CACHE_NAME = "siper-ipm-cache-v21";
+const CACHE_NAME = "siper-ipm-cache-v22";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
   "./script.js",
   "./manifest.json",
   "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/apple-touch-icon.png",
-  "./icons/logo-app.png",
-  "./icons/splash-icon-192.png",
-  "./icons/splash-icon-512.png",
 ];
 
 self.addEventListener("install", (event) => {
@@ -17,7 +12,6 @@ self.addEventListener("install", (event) => {
     (async () => {
       try {
         const cache = await caches.open(CACHE_NAME);
-        // Cache file satu-satu, jangan gunakan addAll (lebih permisif)
         for (const file of FILE_TERCACHE) {
           try {
             await cache.add(file);
@@ -45,7 +39,6 @@ self.addEventListener("activate", (event) => {
   );
   self.clients.claim();
 });
-
 self.addEventListener("fetch", (event) => {
   const url = event.request.url;
 
