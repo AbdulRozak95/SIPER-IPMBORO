@@ -267,7 +267,9 @@ function setupRefreshButton() {
   });
 }
 
-const MAX_LOGO_FILE_SIZE = 5 * 1024 * 1024; // Maksimal 5 MB; logo disimpan langsung di Google Drive\nlet selectedLogoBase64 = "";\nlet selectedLogoFileName = "";
+const MAX_LOGO_FILE_SIZE = 5 * 1024 * 1024; // Maksimal 5 MB; logo disimpan langsung di Google Drive
+let selectedLogoBase64 = "";
+let selectedLogoFileName = "";
 
 async function fetchSettings() {
   if (!API_URL || API_URL.includes("GANTI_DENGAN_URL")) return;
@@ -325,6 +327,7 @@ function setupPengaturan() {
     const reader = new FileReader();
     reader.onload = () => {
       selectedLogoBase64 = reader.result;
+      selectedLogoFileName = file.name;
       applyLogo(selectedLogoBase64);
     };
     reader.readAsDataURL(file);
