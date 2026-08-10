@@ -267,8 +267,7 @@ function setupRefreshButton() {
   });
 }
 
-const MAX_LOGO_FILE_SIZE = 35 * 1024; // ~35 KB, aman untuk batas cell Google Sheets
-let selectedLogoBase64 = "";
+const MAX_LOGO_FILE_SIZE = 5 * 1024 * 1024; // Maksimal 5 MB; logo disimpan langsung di Google Drive\nlet selectedLogoBase64 = "";\nlet selectedLogoFileName = "";
 
 async function fetchSettings() {
   if (!API_URL || API_URL.includes("GANTI_DENGAN_URL")) return;
@@ -318,7 +317,7 @@ function setupPengaturan() {
     }
 
     if (file.size > MAX_LOGO_FILE_SIZE) {
-      showToast("Ukuran gambar terlalu besar. Gunakan gambar di bawah 35 KB.", "error");
+      showToast("Ukuran gambar terlalu besar. Maksimal 5 MB.", "error");
       inputLogo.value = "";
       return;
     }
@@ -341,7 +340,7 @@ function setupPengaturan() {
     btnSimpanLogo.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
 
     try {
-      const result = await kirimData({ action: "saveLogo", logo: selectedLogoBase64 });
+      const result = await kirimData({ action: "saveLogo", logo: selectedLogoBase64, fileName: selectedLogoFileName });
       if (result.success) {
         showToast("Logo berhasil disimpan", "success");
       } else {
