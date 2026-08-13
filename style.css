@@ -1477,14 +1477,38 @@ tbody tr:hover { background: var(--blue-50); }
    Referensi visual: SIPER IPM BORO - karakter jas kuning
    ========================================================= */
 .login-hero-scene {
-  background-image:
-    linear-gradient(90deg, rgba(0,70,45,.10), rgba(0,80,55,.04)),
-    url("./icons/login-hero.png");
-  background-size: 100% 100%;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-color: #08765b;
+  background: #08765b;
+  overflow: hidden;
 }
+
+/* Gambar utama dibuat sebagai layer terpisah agar benar-benar bisa dianimasikan. */
+.login-hero-art {
+  position: absolute;
+  inset: -4%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.login-hero-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,70,45,.10), rgba(0,80,55,.04));
+}
+
+.login-hero-art img {
+  width: 108%;
+  height: 108%;
+  object-fit: cover;
+  object-position: center center;
+  transform-origin: 52% 52%;
+  animation:
+    heroSceneEnter 2.4s cubic-bezier(.18,.72,.2,1) both,
+    heroSceneFloat 9s 2.4s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
 
 .login-hero-scene .login-bg-shape,
 .login-hero-scene::before,
@@ -1502,7 +1526,7 @@ tbody tr:hover { background: var(--blue-50); }
   border: 1px solid rgba(255,255,255,.85);
   box-shadow: 0 25px 65px rgba(0,35,25,.28), 0 8px 22px rgba(0,0,0,.12);
   transform-origin: center bottom;
-  animation: loginCardDragIn 1.35s cubic-bezier(.18,.78,.2,1) both;
+  animation: loginCardDragIn 1.9s cubic-bezier(.18,.78,.2,1) both;
 }
 
 /* Ilustrasi folder lama disembunyikan karena scene baru sudah memiliki karakter + arsip. */
@@ -1535,6 +1559,17 @@ tbody tr:hover { background: var(--blue-50); }
 
 .login-hero-scene .login-hint {
   color: var(--gray-500);
+}
+
+@keyframes heroSceneEnter {
+  0% { opacity: .55; transform: translate3d(-3.5%, 1.5%, 0) scale(1.10); }
+  55% { opacity: .95; transform: translate3d(1.2%, -.5%, 0) scale(1.045); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes heroSceneFloat {
+  0% { transform: translate3d(-.8%, .3%, 0) scale(1.015); }
+  100% { transform: translate3d(.8%, -.5%, 0) scale(1.035); }
 }
 
 @keyframes loginCardDragIn {
@@ -1586,6 +1621,17 @@ tbody tr:hover { background: var(--blue-50); }
 }
 
 @media (max-width: 520px) {
+  .login-hero-art { inset: -8%; }
+
+  .login-hero-art img {
+    width: 116%;
+    height: 116%;
+    object-position: 38% center;
+    animation:
+      heroSceneEnterMobile 2s cubic-bezier(.18,.72,.2,1) both,
+      heroSceneFloatMobile 8s 2s ease-in-out infinite alternate;
+  }
+
   .login-hero-scene {
     min-height: 100svh;
     background-position: 35% center;
@@ -1598,6 +1644,16 @@ tbody tr:hover { background: var(--blue-50); }
     margin: 0 auto;
     background: rgba(255,255,255,.96);
     animation-name: loginCardDragMobile;
+  }
+
+  @keyframes heroSceneEnterMobile {
+    0% { opacity: .6; transform: translate3d(-4%, 1%, 0) scale(1.10); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  }
+
+  @keyframes heroSceneFloatMobile {
+    0% { transform: translate3d(-.7%, .2%, 0) scale(1.015); }
+    100% { transform: translate3d(.7%, -.4%, 0) scale(1.035); }
   }
 
   @keyframes loginCardDragMobile {
