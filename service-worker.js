@@ -1,4 +1,4 @@
-const CACHE_NAME = "siper-ipm-cache-v24";
+const CACHE_NAME = "siper-ipm-cache-v25";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
