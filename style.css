@@ -1479,8 +1479,8 @@ tbody tr:hover { background: var(--blue-50); }
 .login-hero-scene {
   background-image:
     linear-gradient(90deg, rgba(0,70,45,.10), rgba(0,80,55,.04)),
-    url("./assets/login-hero.png");
-  background-size: cover;
+    url("./icons/login-hero.png");
+  background-size: 100% 100%;
   background-position: center center;
   background-repeat: no-repeat;
   background-color: #08765b;
