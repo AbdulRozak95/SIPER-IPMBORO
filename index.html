@@ -22,37 +22,81 @@
 <div class="overlay" id="overlay"></div>
 <div class="toast" id="toast"></div>
 <div class="login-screen" id="loginScreen">
+  <div class="login-bg-shape shape-one"></div>
+  <div class="login-bg-shape shape-two"></div>
+  <div class="login-bg-shape shape-three"></div>
+
   <div class="login-box">
-    <div class="login-header">
-      <div class="logo-wrapper">
-        <i class="fa-solid fa-envelope-open-text logo-icon" id="loginLogoIcon" style="display:none;"></i>
-        <img src="icons/logo-app.png" alt="Logo" id="loginLogoImg" class="logo-img">
+    <div class="login-visual" aria-hidden="true">
+      <div class="visual-orbit orbit-one"></div>
+      <div class="visual-orbit orbit-two"></div>
+      <div class="visual-spark spark-one">✦</div>
+      <div class="visual-spark spark-two">✦</div>
+
+      <div class="archive-folder">
+        <div class="folder-tab"></div>
+        <div class="folder-body">
+          <div class="folder-paper paper-back"></div>
+          <div class="folder-paper paper-front">
+            <div class="paper-line line-one"></div>
+            <div class="paper-line line-two"></div>
+            <div class="paper-line line-three"></div>
+            <div class="paper-stamp"><i class="fa-solid fa-envelope-open-text"></i></div>
+          </div>
+          <div class="paper-seal"><i class="fa-solid fa-check"></i></div>
+        </div>
       </div>
-      <h1>SIPER IPM BORO</h1>
-      <p>Sistem Pengarsipan Surat PD IPM Bojonegoro</p>
+    </div>
+
+    <div class="login-header">
+      <div class="login-brand">
+        <div class="login-brand-logo">
+          <i class="fa-solid fa-envelope-open-text logo-icon" id="loginLogoIcon" style="display:none;"></i>
+          <img src="icons/logo-app.png" alt="Logo SIPER IPM" id="loginLogoImg" class="logo-img">
+        </div>
+        <div>
+          <h1>SIPER IPM BORO</h1>
+          <p>Sistem Pengarsipan Surat PD IPM Bojonegoro</p>
+        </div>
+      </div>
+      <div class="login-welcome">
+        <span>Selamat datang</span>
+        <strong>Masuk untuk melanjutkan</strong>
+      </div>
     </div>
 
     <form id="formLoginUnified">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Masukkan username Anda" required>
+      <div class="form-group login-field">
+        <label for="username"><i class="fa-solid fa-user"></i> Nama Pengguna</label>
+        <div class="login-input-wrap">
+          <input type="text" id="username" placeholder="Masukkan nama Anda" autocomplete="username" required>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <div class="password-field">
-          <input type="password" id="password" placeholder="Masukkan password" required>
-          <button type="button" class="btn-toggle-password" id="btnTogglePassword" title="Tampilkan/Sembunyikan password">
+
+      <div class="form-group login-field">
+        <label for="password"><i class="fa-solid fa-lock"></i> Password</label>
+        <div class="password-field login-input-wrap">
+          <input type="password" id="password" placeholder="Masukkan password" autocomplete="current-password" required>
+          <button type="button" class="btn-toggle-password" id="btnTogglePassword" title="Tampilkan/Sembunyikan password" aria-label="Tampilkan/Sembunyikan password">
             <i class="fa-solid fa-eye"></i>
           </button>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary btn-block">
-        <i class="fa-solid fa-right-to-bracket"></i> Masuk
+
+      <button type="submit" class="btn btn-primary btn-block login-submit">
+        <span>Masuk ke SIPER</span>
+        <i class="fa-solid fa-arrow-right"></i>
       </button>
-      <p class="login-hint">Masukkan username dan password untuk mengakses aplikasi.</p>
+
+      <p class="login-hint">
+        Anggota dapat menggunakan nama masing-masing dengan password yang telah ditentukan.
+      </p>
     </form>
 
-    <p class="dev-credit">Developed by PD IPM Bojonegoro 2026/2028</p>
+    <div class="login-footer">
+      <span><i class="fa-solid fa-shield-halved"></i> Akses internal organisasi</span>
+      <span>PD IPM Bojonegoro 2026/2028</span>
+    </div>
   </div>
 </div>
 
