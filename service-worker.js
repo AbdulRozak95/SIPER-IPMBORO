@@ -1,4 +1,4 @@
-const CACHE_NAME = "siper-ipm-cache-v28";
+const CACHE_NAME = "siper-ipm-cache-v29";
 const FILE_TERCACHE = [
   "./index.html",
   "./style.css",
@@ -10,7 +10,7 @@ const FILE_TERCACHE = [
   "./icons/logo-app.png",
   "./icons/splash-icon-192.png",
   "./icons/splash-icon-512.png",
-  "./assets/login-hero.png",
+  "./icons/login-hero.png",
 ];
 
 self.addEventListener("install", (event) => {
