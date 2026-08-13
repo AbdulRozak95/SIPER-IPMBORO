@@ -1470,3 +1470,196 @@ tbody tr:hover { background: var(--blue-50); }
     opacity: .58;
   }
 }
+
+
+/* =========================================================
+   LOGIN HERO SCENE v27
+   Referensi visual: SIPER IPM BORO - karakter jas kuning
+   ========================================================= */
+.login-hero-scene {
+  background-image:
+    linear-gradient(90deg, rgba(0,70,45,.10), rgba(0,80,55,.04)),
+    url("./assets/login-hero.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-color: #08765b;
+}
+
+.login-hero-scene .login-bg-shape,
+.login-hero-scene::before,
+.login-hero-scene::after {
+  /* tetap mempertahankan gerak bola/shape di atas ilustrasi */
+  z-index: 0;
+}
+
+.login-hero-scene .login-box {
+  z-index: 4;
+  width: min(100%, 405px);
+  margin-left: min(47vw, 540px);
+  margin-right: 0;
+  background: rgba(255,255,255,.95);
+  border: 1px solid rgba(255,255,255,.85);
+  box-shadow: 0 25px 65px rgba(0,35,25,.28), 0 8px 22px rgba(0,0,0,.12);
+  transform-origin: center bottom;
+  animation: loginCardDragIn 1.35s cubic-bezier(.18,.78,.2,1) both;
+}
+
+/* Ilustrasi folder lama disembunyikan karena scene baru sudah memiliki karakter + arsip. */
+.login-hero-scene .login-visual {
+  display: none;
+}
+
+.login-hero-scene .login-header,
+.login-hero-scene #formLoginUnified,
+.login-hero-scene .login-footer {
+  position: relative;
+  z-index: 2;
+}
+
+.login-hero-scene .login-brand-logo {
+  background: rgba(239,253,247,.95);
+}
+
+.login-hero-scene .login-brand h1 {
+  font-size: 18px;
+}
+
+.login-hero-scene .login-welcome {
+  margin-top: 10px;
+}
+
+.login-hero-scene .login-welcome strong {
+  font-size: 14px;
+}
+
+.login-hero-scene .login-hint {
+  color: var(--gray-500);
+}
+
+@keyframes loginCardDragIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(130px, 10px, 0) rotate(1.2deg) scale(.96);
+  }
+  45% {
+    opacity: 1;
+    transform: translate3d(72px, 4px, 0) rotate(-1deg) scale(.985);
+  }
+  78% {
+    transform: translate3d(-8px, 0, 0) rotate(.25deg) scale(1.005);
+  }
+  90% {
+    transform: translate3d(5px, 0, 0) rotate(-.15deg) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0) scale(1);
+  }
+}
+
+/* Gerakan kecil setelah kartu berhenti, memberi kesan karakter baru saja bersandar. */
+.login-hero-scene .login-box::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: -10px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(0,35,25,.16);
+  filter: blur(8px);
+  z-index: -1;
+  animation: loginShadowSettle 1.7s 1.05s ease-out both;
+}
+
+@keyframes loginShadowSettle {
+  from { opacity: 0; transform: scale(.7); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 900px) and (min-width: 521px) {
+  .login-hero-scene .login-box {
+    margin-left: min(40vw, 330px);
+    width: min(100%, 390px);
+  }
+}
+
+@media (max-width: 520px) {
+  .login-hero-scene {
+    min-height: 100svh;
+    background-position: 35% center;
+    background-size: auto 100%;
+    padding: 12px;
+  }
+
+  .login-hero-scene .login-box {
+    width: min(100%, 390px);
+    margin: 0 auto;
+    background: rgba(255,255,255,.96);
+    animation-name: loginCardDragMobile;
+  }
+
+  @keyframes loginCardDragMobile {
+    0% { opacity: 0; transform: translateY(42px) scale(.96); }
+    70% { opacity: 1; transform: translateY(-5px) scale(1.005); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+}
+
+
+/* =========================================================
+   LOGO DINAMIS SCENE LOGIN - V28
+   Logo mengikuti file yang disimpan melalui Pengaturan.
+   ========================================================= */
+.login-scene-logo {
+  position: absolute;
+  z-index: 12;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .20));
+}
+
+/* 1. Logo pojok kiri atas */
+.login-scene-logo-top {
+  width: 78px;
+  height: 78px;
+  left: 28px;
+  top: 25px;
+  animation: loginLogoAppearV28 .8s .25s cubic-bezier(.2,.8,.2,1) both;
+}
+
+/* 2. Logo pada gedung */
+.login-scene-logo-building {
+  width: 50px;
+  height: 50px;
+  right: 6.5%;
+  top: 18%;
+  animation: loginBuildingLogoAppearV28 .8s .55s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes loginLogoAppearV28 {
+  from { opacity: 0; transform: translateY(-15px) scale(.75); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes loginBuildingLogoAppearV28 {
+  from { opacity: 0; transform: scale(.65) rotate(-8deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@media (max-width: 520px) {
+  .login-scene-logo-top {
+    width: 52px;
+    height: 52px;
+    left: 15px;
+    top: 15px;
+  }
+
+  .login-scene-logo-building {
+    width: 34px;
+    height: 34px;
+    right: 5%;
+    top: 14%;
+  }
+}
