@@ -11,7 +11,7 @@ let isSubmitting = false;
 
 let currentRole = null;
 let currentName = "";
-let currentPassword = ""; // hanya diisi kalau login sebagai admin
+let currentPassword = "";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
