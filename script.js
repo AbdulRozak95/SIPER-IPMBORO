@@ -286,9 +286,6 @@ async function fetchSettings() {
 
 function applyLogo(base64) {
   const DEFAULT_LOGO = "icons/logo-app.png";
-  const logoSrc = base64 || DEFAULT_LOGO;
-
-  // Semua logo aplikasi yang sudah ada
   const targets = [
     { icon: "sidebarLogoIcon", img: "sidebarLogoImg" },
     { icon: "loginLogoIcon", img: "loginLogoImg" },
@@ -300,18 +297,10 @@ function applyLogo(base64) {
     const imgEl = document.getElementById(img);
     if (!iconEl || !imgEl) return;
 
-    imgEl.src = logoSrc;
+    imgEl.src = base64 || DEFAULT_LOGO;
     imgEl.style.display = "block";
     iconEl.style.display = "none";
   });
-
-  // Logo 1: pojok kiri atas scene login
-  const loginSceneLogo = document.getElementById("loginSceneLogo");
-  if (loginSceneLogo) loginSceneLogo.src = logoSrc;
-
-  // Logo 2: logo pada gedung scene login
-  const loginBuildingLogo = document.getElementById("loginBuildingLogo");
-  if (loginBuildingLogo) loginBuildingLogo.src = logoSrc;
 }
 
 function setupPengaturan() {
