@@ -21,6 +21,22 @@
 
 <div class="overlay" id="overlay"></div>
 <div class="toast" id="toast"></div>
+
+<!-- Modal konfirmasi & notifikasi -->
+<div class="action-modal" id="actionModal" aria-hidden="true">
+  <div class="action-modal-backdrop" data-modal-close="true"></div>
+  <div class="action-modal-card" role="dialog" aria-modal="true" aria-labelledby="actionModalTitle">
+    <div class="action-modal-icon" id="actionModalIcon">
+      <i class="fa-solid fa-circle-question"></i>
+    </div>
+    <h3 id="actionModalTitle">Apakah Anda yakin?</h3>
+    <p id="actionModalMessage">Periksa kembali data sebelum melanjutkan.</p>
+    <div class="action-modal-actions" id="actionModalActions">
+      <button type="button" class="btn btn-secondary" id="actionModalCancel">Batal</button>
+      <button type="button" class="btn btn-primary" id="actionModalConfirm">OK</button>
+    </div>
+  </div>
+</div>
 <div class="login-screen" id="loginScreen">
   <div class="login-bg-shape shape-one"></div>
   <div class="login-bg-shape shape-two"></div>
