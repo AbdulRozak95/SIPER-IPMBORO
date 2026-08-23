@@ -22,6 +22,7 @@ if ("serviceWorker" in navigator) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  setupActionModal();
   checkConfig();
   setupLogin();
   setupNavigation();
@@ -53,6 +54,84 @@ function checkConfig() {
     `;
     content.prepend(warning);
   }
+}
+
+let actionModalResolve = null;
+
+function setupActionModal() {
+  const modal = document.getElementById("actionModal");
+  const card = modal.querySelector(".action-modal-card");
+  const cancelBtn = document.getElementById("actionModalCancel");
+  const confirmBtn = document.getElementById("actionModalConfirm");
+  const backdrop = modal.querySelector(".action-modal-backdrop");
+
+  const close = (result) => {
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden", "true");
+    card.classList.remove("success", "danger");
+    if (actionModalResolve) {
+      const resolve = actionModalResolve;
+      actionModalResolve = null;
+      resolve(result);
+    }
+  };
+
+  cancelBtn.addEventListener("click", () => close(false));
+  confirmBtn.addEventListener("click", () => close(true));
+  backdrop.addEventListener("click", () => {
+    if (cancelBtn.style.display !== "none") close(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (!modal.classList.contains("show")) return;
+    if (e.key === "Escape" && cancelBtn.style.display !== "none") close(false);
+    if (e.key === "Enter") confirmBtn.click();
+  });
+}
+
+function showConfirmModal({ title = "Apakah Anda yakin?", message = "Periksa kembali data sebelum melanjutkan.", confirmText = "OK", danger = false } = {}) {
+  const modal = document.getElementById("actionModal");
+  const card = modal.querySelector(".action-modal-card");
+  const icon = document.getElementById("actionModalIcon");
+  const cancelBtn = document.getElementById("actionModalCancel");
+  const confirmBtn = document.getElementById("actionModalConfirm");
+
+  document.getElementById("actionModalTitle").textContent = title;
+  document.getElementById("actionModalMessage").textContent = message;
+  icon.innerHTML = `<i class="fa-solid ${danger ? "fa-triangle-exclamation" : "fa-circle-question"}"></i>`;
+  confirmBtn.textContent = confirmText;
+  cancelBtn.style.display = "inline-flex";
+  card.classList.toggle("danger", danger);
+  card.classList.remove("success");
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+  confirmBtn.focus();
+
+  return new Promise((resolve) => {
+    actionModalResolve = resolve;
+  });
+}
+
+function showSuccessModal(message, title = "Berhasil") {
+  const modal = document.getElementById("actionModal");
+  const card = modal.querySelector(".action-modal-card");
+  const icon = document.getElementById("actionModalIcon");
+  const cancelBtn = document.getElementById("actionModalCancel");
+  const confirmBtn = document.getElementById("actionModalConfirm");
+
+  document.getElementById("actionModalTitle").textContent = title;
+  document.getElementById("actionModalMessage").textContent = message;
+  icon.innerHTML = `<i class="fa-solid fa-check"></i>`;
+  confirmBtn.textContent = "OK";
+  cancelBtn.style.display = "none";
+  card.classList.remove("danger");
+  card.classList.add("success");
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+  confirmBtn.focus();
+
+  return new Promise((resolve) => {
+    actionModalResolve = resolve;
+  });
 }
 
 function setupLogin() {
@@ -498,6 +577,17 @@ function setupForm() {
       keterangan: document.getElementById("keterangan").value.trim(),
     };
 
+    const isEdit = editId !== null;
+    const confirmed = await showConfirmModal({
+      title: "Apakah Anda yakin?",
+      message: isEdit
+        ? "Data surat yang dipilih akan diperbarui. Pastikan seluruh perubahan sudah benar."
+        : "Data surat akan disimpan ke sistem. Pastikan seluruh data dan berkas sudah benar.",
+      confirmText: isEdit ? "Simpan" : "Input",
+      danger: false,
+    });
+    if (!confirmed) return;
+
     isSubmitting = true;
     btnSubmit.disabled = true;
     btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
@@ -508,7 +598,8 @@ function setupForm() {
       const result = await kirimData({ action, data: item, file: fileData });
 
       if (result.success) {
-        showToast(editId !== null ? "Surat berhasil diperbarui" : "Surat berhasil disimpan", "success");
+        const successMessage = isEdit ? "Data berhasil disimpan" : "Data berhasil diinput";
+        await showSuccessModal(successMessage);
         resetForm();
         await muatData();
         document.querySelector('.menu-item[data-page="daftar"]').click();
@@ -781,13 +872,20 @@ async function hapusSurat(id) {
     return;
   }
 
-  if (!confirm("Yakin ingin menghapus data surat ini?")) return;
+  const confirmed = await showConfirmModal({
+    title: "Apakah Anda yakin?",
+    message: "Data surat yang dipilih akan dihapus dan tidak dapat dikembalikan.",
+    confirmText: "Hapus",
+    danger: true,
+  });
+  if (!confirmed) return;
 
   showLoading(true);
   try {
     const result = await kirimData({ action: "delete", id });
     if (result.success) {
-      showToast("Surat berhasil dihapus", "success");
+      showLoading(false);
+      await showSuccessModal("Data berhasil dihapus");
       await muatData();
     } else {
       showToast("Gagal menghapus: " + (result.message || ""), "error");
