@@ -538,88 +538,98 @@ tbody tr:hover { background: var(--blue-50); }
 .toast.error { background: var(--danger); }
 .toast.success { background: var(--success); }
 
-/* Modal konfirmasi & notifikasi aksi */
-.action-modal {
+/* Modal konfirmasi & hasil tindakan */
+.modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 400;
-  display: none;
+  z-index: 500;
+  display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .2s ease, visibility .2s ease;
 }
-.action-modal.show { display: flex; }
-.action-modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.52);
-  backdrop-filter: blur(2px);
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
-.action-modal-card {
-  position: relative;
+.app-modal {
   width: min(430px, 100%);
   background: var(--white);
-  border-radius: 12px;
-  padding: 30px 28px 24px;
+  border-radius: 18px;
+  padding: 28px 26px 24px;
   text-align: center;
-  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.22);
-  animation: modalPop 0.18s ease-out;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, .25);
+  transform: translateY(12px) scale(.97);
+  transition: transform .2s ease;
 }
-.action-modal-icon {
-  width: 64px;
-  height: 64px;
+.modal-overlay.show .app-modal {
+  transform: translateY(0) scale(1);
+}
+.app-modal-icon {
+  width: 66px;
+  height: 66px;
   margin: 0 auto 16px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--warning-light);
-  color: var(--warning);
-  font-size: 32px;
+  font-size: 29px;
 }
-.action-modal-card.success .action-modal-icon {
-  background: var(--success-light);
-  color: var(--success);
+.app-modal-icon.warning {
+  background: #fff4d6;
+  color: #d99a00;
 }
-.action-modal-card.danger .action-modal-icon {
-  background: var(--danger-light);
+.app-modal-icon.danger {
+  background: #ffe7e7;
   color: var(--danger);
 }
-.action-modal-card h3 {
-  margin-bottom: 10px;
-  font-size: 21px;
-  color: var(--gray-800);
+.app-modal-icon.success {
+  background: #e6f7ee;
+  color: var(--success);
 }
-.action-modal-card p {
+.app-modal h3 {
+  margin: 0 0 9px;
+  color: var(--gray-900);
+  font-size: 21px;
+  font-weight: 700;
+}
+.app-modal p {
   margin: 0 auto;
-  max-width: 350px;
+  max-width: 360px;
   color: var(--gray-600);
   font-size: 14px;
   line-height: 1.6;
 }
-.action-modal-actions {
+.app-modal-actions {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 24px;
 }
-.action-modal-actions .btn {
-  min-width: 88px;
+.app-modal-actions .btn {
+  min-width: 112px;
+  height: 54px;
+  padding: 0 22px;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
+  text-align: center;
+  box-sizing: border-box;
 }
-.action-modal-card.success .action-modal-actions .btn-primary {
-  background: var(--success);
-}
-.action-modal-card.danger .action-modal-actions .btn-primary {
+.btn-danger {
   background: var(--danger);
+  color: var(--white);
+  border-color: var(--danger);
 }
-@keyframes modalPop {
-  from { opacity: 0; transform: translateY(8px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@media (max-width: 480px) {
-  .action-modal-card { padding: 26px 20px 20px; }
-  .action-modal-actions .btn { flex: 1; }
+.btn-danger:hover {
+  filter: brightness(.92);
 }
 
 .btn:disabled {
