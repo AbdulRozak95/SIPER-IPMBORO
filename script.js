@@ -3,6 +3,8 @@ const APP_ACCESS_KEY = "b_oUISejzLl1rMEXGn5Fj4lcxmcjtMuC";
 const ADMIN_USERNAME = "Admin";
 const ADMIN_PASSWORD = "ipminboro123";
 const MEMBER_PASSWORD = "ipmboro";
+const JURY_USERNAME = "Juri";
+const JURY_PASSWORD = "ipmjuri";
 const SESSION_DURATION_MS = 1 * 60 * 60 * 1000;
 
 let suratData = [];
@@ -164,7 +166,16 @@ function setupLogin() {
       return;
     }
 
-    if (username !== ADMIN_USERNAME && password === MEMBER_PASSWORD) {
+    if (username === JURY_USERNAME && password === JURY_PASSWORD) {
+      currentRole = "juri";
+      currentName = "Juri";
+      currentPassword = "";
+      simpanSesi();
+      masukKeAplikasi();
+      return;
+    }
+
+    if (username !== ADMIN_USERNAME && username !== JURY_USERNAME && password === MEMBER_PASSWORD) {
       currentRole = "user";
       currentName = username; // Username menjadi Nama Penginput
       currentPassword = "";
@@ -203,7 +214,9 @@ function masukKeAplikasi() {
   document.getElementById("currentUserRole").innerHTML =
     currentRole === "admin"
       ? `<span class="role-badge admin">Admin</span>`
-      : `<span class="role-badge user">Anggota</span>`;
+      : currentRole === "juri"
+        ? `<span class="role-badge user">Juri</span>`
+        : `<span class="role-badge user">Anggota</span>`;
 
   if (currentRole === "user") {
     const inputNama = document.getElementById("namaPenginput");
@@ -212,17 +225,29 @@ function masukKeAplikasi() {
   }
 
   const menuDashboard = document.querySelector('.menu-item[data-page="dashboard"]');
+  const menuTambah = document.querySelector('.menu-item[data-page="tambah"]');
+  const menuDaftar = document.querySelector('.menu-item[data-page="daftar"]');
   const menuPengaturan = document.getElementById("menuPengaturan");
 
   if (currentRole === "admin") {
     menuDashboard.style.display = "flex";
+    menuTambah.style.display = "flex";
+    menuDaftar.style.display = "flex";
     menuPengaturan.style.display = "flex";
-    document.querySelector('.menu-item[data-page="daftar"]').click();
-    document.querySelector('.menu-item[data-page="dashboard"]').click();
+    menuDaftar.click();
+    menuDashboard.click();
+  } else if (currentRole === "juri") {
+    menuDashboard.style.display = "flex";
+    menuTambah.style.display = "none";
+    menuDaftar.style.display = "flex";
+    menuPengaturan.style.display = "none";
+    menuDashboard.click();
   } else {
     menuDashboard.style.display = "none";
+    menuTambah.style.display = "flex";
+    menuDaftar.style.display = "flex";
     menuPengaturan.style.display = "none";
-    document.querySelector('.menu-item[data-page="daftar"]').click();
+    menuDaftar.click();
   }
 
   muatData();
@@ -304,6 +329,11 @@ function setupNavigation() {
         pengaturan: "Pengaturan",
       };
       pageTitle.textContent = titles[target];
+
+      if (target === "tambah" && currentRole === "juri") {
+        showToast("Akses Juri tidak dapat menambah atau mengubah surat.", "error");
+        return;
+      }
 
       if (target === "tambah" && editId === null) {
         resetForm();
@@ -522,6 +552,10 @@ function setupForm() {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (currentRole === "juri") {
+      showToast("Akses Juri hanya untuk melihat data dan berkas.", "error");
+      return;
+    }
     if (isSubmitting) return;
 
     const fileInput = document.getElementById("fileSurat");
@@ -750,6 +784,7 @@ function renderTable() {
   }
 
   const isAdmin = currentRole === "admin";
+  const canDownload = currentRole === "admin" || currentRole === "juri";
 
   filtered.forEach((s, i) => {
     tbody.innerHTML += `
@@ -770,7 +805,7 @@ function renderTable() {
             <a class="btn-icon btn-file" href="${escapeHtml(drivePreviewUrl(s.linkDrive))}" target="_blank" rel="noopener" title="Preview">
               <i class="fa-solid fa-eye"></i>
             </a>
-            ${isAdmin ? `<a class="btn-icon btn-download" href="${escapeHtml(driveDownloadUrl(s.linkDrive))}" target="_blank" rel="noopener" title="Download">
+            ${canDownload ? `<a class="btn-icon btn-download" href="${escapeHtml(driveDownloadUrl(s.linkDrive))}" target="_blank" rel="noopener" title="Download">
               <i class="fa-solid fa-download"></i>
             </a>` : ""}
           </div>` : `<span style="color:var(--gray-400); font-size:12px;">-</span>`}
