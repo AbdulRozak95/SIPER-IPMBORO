@@ -21,9 +21,7 @@
   --shadow: 0 4px 18px rgba(20, 40, 90, 0.08);
   --transition: all 0.2s ease;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
 body {
   font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: var(--blue-50);
