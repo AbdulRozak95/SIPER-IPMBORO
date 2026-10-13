@@ -549,7 +549,6 @@ tbody tr:hover { background: var(--blue-50); }
 .toast.error { background: var(--danger); }
 .toast.success { background: var(--success); }
 
-/* Modal konfirmasi & hasil tindakan */
 .action-modal {
   position: fixed;
   inset: 0;
@@ -889,9 +888,6 @@ tbody tr:hover { background: var(--blue-50); }
 .btn-file { background:var(--blue-100); color:var(--blue-700); }
 .btn-download { background:var(--success-light); color:var(--success); }
 
-/* =========================================================
-   LOGIN ANIMASI - SIPER IPM BORO
-   ========================================================= */
 .login-screen {
   position: relative;
   min-height: 100vh;
