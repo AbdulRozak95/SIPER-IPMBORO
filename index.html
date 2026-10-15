@@ -225,7 +225,30 @@
         </div>
       </section>
       <section class="page" id="page-tambah">
-        <div class="panel">
+        <div class="panel ai-upload-panel ai-upload-panel-top">
+          <div class="ai-upload-heading">
+            <span class="ai-upload-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+            <div>
+              <strong>Unggah Surat & Ekstraksi AI</strong>
+              <small>Unggah berkas terlebih dahulu. AI akan membantu membaca metadata untuk mengisi form di bawah. Periksa kembali hasilnya sebelum menyimpan.</small>
+            </div>
+          </div>
+          <label class="upload-dropzone" for="fileSurat">
+            <input type="file" id="fileSurat" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            <span class="upload-dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+            <strong id="selectedFileName">Pilih berkas atau letakkan di sini</strong>
+            <span>Format PDF, DOC, atau DOCX · Maksimal 10 MB</span>
+            <span class="upload-browse-label">Pilih Berkas</span>
+          </label>
+          <small class="file-hint">Ekstraksi AI saat ini menggunakan PDF. Berkas DOC/DOCX tetap dapat diunggah dan diisi secara manual.</small>
+          <div class="ai-upload-actions">
+            <button type="button" class="btn btn-primary" id="btnExtractAI"><i class="fa-solid fa-wand-magic-sparkles"></i> Baca dengan AI</button>
+            <span id="aiExtractStatus" role="status" aria-live="polite"></span>
+          </div>
+          <div id="existingFile" class="existing-file" style="display:none;"></div>
+        </div>
+
+        <div class="panel form-panel">
           <div class="panel-header">
             <h3><i class="fa-solid fa-pen-to-square"></i> <span id="formTitle">Form Tambah Surat</span></h3>
           </div>
@@ -294,13 +317,6 @@
             <div class="form-group">
               <label for="namaPenginput">Nama Penginput</label>
               <input type="text" id="namaPenginput" placeholder="Nama Anda" required>
-            </div>
-
-            <div class="form-group full">
-              <label for="fileSurat">Berkas Surat</label>
-              <input type="file" id="fileSurat" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-              <small class="file-hint">Format PDF, DOC, atau DOCX. Maksimal 10 MB. File akan otomatis diarsipkan ke Google Drive sesuai jenis, tahun, dan bulan surat.</small>
-              <div id="existingFile" class="existing-file" style="display:none;"></div>
             </div>
 
             <div class="form-group full">
