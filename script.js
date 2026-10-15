@@ -177,7 +177,7 @@ function setupLogin() {
 
     if (username !== ADMIN_USERNAME && username !== JURY_USERNAME && password === MEMBER_PASSWORD) {
       currentRole = "user";
-      currentName = username; // Username menjadi Nama Penginput
+      currentName = username;
       currentPassword = "";
       simpanSesi();
       masukKeAplikasi();
@@ -263,7 +263,7 @@ function masukKeAplikasi() {
       showToast("Sesi login Anda telah berakhir (1 jam). Silakan login kembali.", "error");
       keluarAplikasi();
     }
-  }, 30000); // Cek setiap 30 detik
+  }, 30000);
 }
 
 async function muatData() {
@@ -293,7 +293,6 @@ async function muatData() {
 }
 
 async function kirimData(payload) {
-  // Sertakan password admin (jika ada) untuk aksi yang perlu verifikasi
   if (currentPassword && !payload.password) {
     payload.password = currentPassword;
   }
@@ -376,7 +375,7 @@ function setupRefreshButton() {
   });
 }
 
-const MAX_LOGO_FILE_SIZE = 5 * 1024 * 1024; // Maksimal 5 MB; logo disimpan langsung di Google Drive
+const MAX_LOGO_FILE_SIZE = 5 * 1024 * 1024;
 let selectedLogoBase64 = "";
 let selectedLogoFileName = "";
 
@@ -500,6 +499,7 @@ async function fileToBase64(file) {
       resolve({
         name: file.name,
         mimeType: file.type || mimeTypeFromExtension(file.name),
+        size: file.size,
         base64: comma >= 0 ? result.slice(comma + 1) : result
       });
     };
@@ -536,6 +536,41 @@ function setupForm() {
   const btnReset = document.getElementById("btnReset");
   const btnSubmit = document.getElementById("btnSubmit");
   const selectJenisData = document.getElementById("jenisData");
+  const btnExtractAI = document.getElementById("btnExtractAI");
+  const fileInput = document.getElementById("fileSurat");
+  const dropzone = document.querySelector(".upload-dropzone");
+  const selectedFileName = document.getElementById("selectedFileName");
+  btnExtractAI.addEventListener("click", extractLetterMetadataWithAI);
+
+  const updateSelectedFileName = () => {
+    const file = fileInput.files && fileInput.files[0];
+    selectedFileName.textContent = file ? file.name : "Pilih berkas atau letakkan di sini";
+  };
+  fileInput.addEventListener("change", updateSelectedFileName);
+  ["dragenter", "dragover"].forEach((eventName) => {
+    dropzone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      dropzone.classList.add("is-dragover");
+    });
+  });
+  ["dragleave", "drop"].forEach((eventName) => {
+    dropzone.addEventListener(eventName, (event) => {
+      event.preventDefault();
+      dropzone.classList.remove("is-dragover");
+    });
+  });
+  dropzone.addEventListener("drop", (event) => {
+    const files = event.dataTransfer && event.dataTransfer.files;
+    if (!files || !files.length) return;
+    try {
+      const transfer = new DataTransfer();
+      transfer.items.add(files[0]);
+      fileInput.files = transfer.files;
+      updateSelectedFileName();
+    } catch (err) {
+      showToast("Berkas belum dapat dipasang. Silakan pilih berkas melalui tombol Pilih Berkas.", "error");
+    }
+  });
 
   selectJenisData.addEventListener("change", () => {
     if (selectJenisData.value !== "Surat Keluar") {
@@ -657,8 +692,56 @@ function setupForm() {
   toggleJenisSuratFields();
 }
 
+
+async function extractLetterMetadataWithAI() {
+  const fileInput = document.getElementById("fileSurat");
+  const file = fileInput.files[0];
+  const status = document.getElementById("aiExtractStatus");
+  const button = document.getElementById("btnExtractAI");
+  if (!file) { showToast("Pilih berkas surat terlebih dahulu.", "error"); return; }
+  const ext = file.name.toLowerCase().split(".").pop();
+  if (ext !== "pdf" || file.type && file.type !== "application/pdf") {
+    showToast("Ekstraksi AI saat ini mendukung PDF. Berkas DOC/DOCX tetap bisa diarsipkan dengan pengisian manual.", "error");
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) { showToast("Ukuran file maksimal 10 MB.", "error"); return; }
+  button.disabled = true;
+  button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Membaca surat...';
+  status.textContent = "Mengirim PDF untuk dibaca. Mohon tunggu.";
+  try {
+    const fileData = await fileToBase64(file);
+    const result = await kirimData({ action: "extractMetadata", file: fileData });
+    if (!result.success || !result.metadata) throw new Error(result.message || "AI belum berhasil membaca metadata.");
+    const m = result.metadata;
+    const set = (id, value) => { const el = document.getElementById(id); if (el && value !== undefined && value !== null) el.value = String(value); };
+    set("jenisData", m.jenisData || "");
+    toggleJenisSuratFields();
+    set("jenisSurat", m.jenisSurat || "");
+    set("nomorSurat", m.nomorSurat || "");
+    set("nomorUmum", m.nomorUmum || "");
+    set("nomorKhusus", m.nomorKhusus || "");
+    set("tanggalSurat", m.tanggalSurat || "");
+    set("asalTujuan", m.asalTujuan || "");
+    set("perihal", m.perihal || "");
+    toggleJenisSuratFields();
+    status.textContent = "Selesai. Periksa dan koreksi semua kolom sebelum menyimpan.";
+    showToast("Metadata berhasil dibaca. Silakan periksa hasilnya.", "success");
+  } catch (err) {
+    console.error("Ekstraksi AI gagal:", err);
+    status.textContent = "Pembacaan gagal. Anda tetap bisa mengisi form secara manual.";
+    showToast(err.message || "Gagal membaca surat dengan AI.", "error");
+  } finally {
+    button.disabled = false;
+    button.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Baca dengan AI';
+  }
+}
+
 function resetForm() {
   document.getElementById("formSurat").reset();
+  const fileInput = document.getElementById("fileSurat");
+  if (fileInput) fileInput.value = "";
+  const selectedFileName = document.getElementById("selectedFileName");
+  if (selectedFileName) selectedFileName.textContent = "Pilih berkas atau letakkan di sini";
   document.getElementById("suratId").value = "";
   editId = null;
   document.getElementById("formTitle").textContent = "Form Tambah Surat";
